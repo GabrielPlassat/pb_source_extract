@@ -2,54 +2,53 @@ import os
 import requests
 import shutil
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 from bs4 import BeautifulSoup
 
 def extraire_sources():
-    # Création d'une fenêtre invisible pour sélectionner le fichier
+    # Fenêtre pour choisir le fichier
     root = tk.Tk()
     root.withdraw()
     
-    print("📂 Sélectionnez votre fichier historique .html...")
-    chemin_html = filedialog.askopenfilename(filetypes=[("Fichiers HTML", "*.html")])
+    print("Sélection du fichier historique...")
+    chemin_html = filedialog.askopenfilename(
+        title="Sélectionnez votre historique HTML",
+        filetypes=[("Fichiers HTML", "*.html")]
+    )
     
     if not chemin_html:
-        print("❌ Aucun fichier sélectionné.")
         return
 
-    dossier_temp = "sources_telechargees"
+    dossier_temp = "sources_extraites_temp"
     os.makedirs(dossier_temp, exist_ok=True)
 
-    # Lecture et analyse
     with open(chemin_html, 'r', encoding='utf-8') as f:
         soup = BeautifulSoup(f, 'html.parser')
 
+    # Extraction basée sur la structure Sofia
     sources = soup.find_all('div', class_='source-card')
-    print(f"🔍 {len(sources)} sources détectées. Téléchargement en cours...")
-
+    
     for i, source in enumerate(sources):
         link_tag = source.find('h2', class_='card-title').find('a')
         if link_tag and link_tag.get('href'):
             url = link_tag['href']
-            # Nettoyage du nom de fichier
+            # Nettoyage du titre pour le nom de fichier
             titre = "".join([c for c in link_tag.get_text() if c.isalnum() or c in (' ', '_')]).strip()
-            nom_fichier = f"source_{i+1}_{titre[:50]}.pdf".replace(' ', '_')
+            nom_fichier = f"{i+1}_{titre[:50]}.pdf".replace(' ', '_')
             
             try:
                 resp = requests.get(url, timeout=20)
                 with open(os.path.join(dossier_temp, nom_fichier), 'wb') as f_pdf:
                     f_pdf.write(resp.content)
-                print(f"✅ OK : {nom_fichier}")
             except:
-                print(f"❌ Échec : {url}")
+                continue
 
-    # Création du ZIP
-    nom_zip = "archive_sources"
+    # Archivage final
+    nom_zip = "Archive_Sources_Energie"
     shutil.make_archive(nom_zip, 'zip', dossier_temp)
-    print(f"\n📦 Terminé ! Votre fichier '{nom_zip}.zip' est prêt.")
-
-    # Nettoyage du dossier temporaire (garde uniquement le ZIP)
     shutil.rmtree(dossier_temp)
+    
+    messagebox.showinfo("Succès", f"Terminé ! L'archive {nom_zip}.zip a été créée.")
 
 if __name__ == "__main__":
     extraire_sources()
