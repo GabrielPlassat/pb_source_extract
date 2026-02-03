@@ -3,69 +3,34 @@ import requests
 from bs4 import BeautifulSoup
 import io
 import zipfile
-from docx import Document
-from docx.shared import Pt
 
 # Configuration de la page
-st.set_page_config(page_title="Extracteur Sofia Pro", page_icon="📝")
+st.set_page_config(page_title="Sofia Export Pro", page_icon="📝")
 
-def html_to_docx_pro(html_content):
-    """Convertisseur avancé HTML vers DOCX conservant tableaux et structures."""
-    doc = Document()
-    soup = BeautifulSoup(html_content, 'html.parser')
+def convert_html_to_doc_format(html_content):
+    """
+    Encapsule le HTML dans un format interprétable directement par Word 
+    pour conserver tableaux, styles et mise en forme.
+    """
+    # On ajoute des balises spécifiques pour que Word reconnaisse l'encodage
+    html_header = (
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" '
+        'xmlns:w="urn:schemas-microsoft-com:office:word" '
+        'xmlns="http://www.w3.org/TR/REC-html40">'
+        '<head><meta charset="utf-8"></head><body>'
+    )
+    html_footer = '</body></html>'
     
-    # Titre principal (H1)
-    h1 = soup.find('h1')
-    if h1:
-        doc.add_heading(h1.get_text(), 0)
-
-    # On cible les éléments principaux de l'historique
-    # On itère sur les éléments de niveau supérieur dans le body
-    for element in soup.find_all(['h2', 'h3', 'div', 'table'], recursive=True):
+    # On nettoie éventuellement le HTML pour supprimer les éléments interactifs (boutons)
+    soup = BeautifulSoup(html_content, 'html.parser')
+    for btn in soup.find_all('button'):
+        btn.decompose()
         
-        # 1. Gestion des Titres
-        if element.name in ['h2', 'h3']:
-            level = 1 if element.name == 'h2' else 2
-            doc.add_heading(element.get_text().strip(), level=level)
+    full_html = html_header + str(soup) + html_footer
+    return io.BytesIO(full_html.encode('utf-8'))
 
-        # 2. Gestion des Tableaux (Structure clé pour les acteurs/comparaisons)
-        elif element.name == 'table':
-            rows = element.find_all('tr')
-            if rows:
-                word_table = doc.add_table(rows=len(rows), cols=len(rows[0].find_all(['td', 'th'])))
-                word_table.style = 'Table Grid'
-                for i, row in enumerate(rows):
-                    cells = row.find_all(['td', 'th'])
-                    for j, cell in enumerate(cells):
-                        word_table.cell(i, j).text = cell.get_text().strip()
-
-        # 3. Gestion des blocs de contenu (Questions / Réponses / Reformulations)
-        elif element.name == 'div':
-            # On ignore le contenu détaillé des sources mais on garde le titre
-            if 'sources' in element.get('class', []):
-                doc.add_heading("Sources associées", level=1)
-                source_titles = element.find_all('h2', class_='card-title')
-                for s_title in source_titles:
-                    doc.add_paragraph(s_title.get_text().strip(), style='List Bullet')
-                continue # On ne va pas plus loin dans le div des sources
-
-            # Pour les autres div, on traite le texte s'il n'est pas déjà dans un tableau
-            if not element.find_parent('table'):
-                text = element.get_text().strip()
-                if text and len(text) > 1:
-                    # Si c'est un paragraphe de réponse Sofia
-                    p = doc.add_paragraph(text)
-                    if 'response' in element.get('class', []):
-                        p.style = 'Body Text'
-
-    # Sauvegarde
-    docx_buffer = io.BytesIO()
-    doc.save(docx_buffer)
-    docx_buffer.seek(0)
-    return docx_buffer
-
-st.title("⚡ Sofia Export Pro")
-st.write("Convertissez votre historique en Word structuré et téléchargez les sources PDF.")
+st.title("⚡ Sofia Export : Word & Sources")
+st.write("Générez un document propre et téléchargez vos sources PDF.")
 
 uploaded_file = st.file_uploader("Glissez votre fichier chat_history.html", type="html")
 
@@ -75,20 +40,21 @@ if uploaded_file:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📄 Document Word")
-        with st.spinner("Génération du Word..."):
-            docx_file = html_to_docx_pro(content)
-            st.download_button(
-                label="📥 Télécharger le .docx",
-                data=docx_file,
-                file_name="Historique_Sofia_Clean.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            )
-        st.caption("Conserve la structure, les tableaux et les titres.")
+        st.subheader("📄 Export Document")
+        # Conversion directe en format interprétable par Word
+        doc_file = convert_html_to_doc_format(content)
+        
+        st.download_button(
+            label="📥 Télécharger l'historique (.doc)",
+            data=doc_file,
+            file_name="Historique_Sofia_Complet.doc",
+            mime="application/msword"
+        )
+        st.caption("Conserve fidèlement la structure et les tableaux.")
 
     with col2:
         st.subheader("📚 Sources PDF")
-        if st.button("Préparer le ZIP des sources"):
+        if st.button("Préparer le ZIP"):
             soup = BeautifulSoup(content, 'html.parser')
             sources = soup.find_all('div', class_='source-card')
             
