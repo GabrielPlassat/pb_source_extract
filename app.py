@@ -40,7 +40,7 @@ def convert_html_to_doc_format(html_content):
 
 # --- INTERFACE STREAMLIT ---
 
-st.title("SofIA - Assistant de Transition Énergétique")
+st.title("Assistant pour formuler un problématique")
 
 tab1, tab2 = st.tabs(["📂 Extraction & Export", "📝 Aide au Prompt Contraintes"])
 
