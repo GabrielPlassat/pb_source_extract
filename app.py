@@ -6,7 +6,7 @@ import zipfile
 import re
 from docx import Document
 
-st.set_page_config(page_title="Sofia - Assistant & Export", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="Aide à la formulation du problème", page_icon="⚡", layout="wide")
 
 # --- FONCTIONS DE CONVERSION ---
 
