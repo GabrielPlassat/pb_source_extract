@@ -95,7 +95,7 @@ with tab2:
     q9 = st.text_area("Quel est le planning général (jalons et livrables à 6 mois, 1 an, etc.) :")
     q10 = st.text_area("Y a t-il une communication prévue ou des contraintes de visibilité pour l'ADEME :")
     q11 = st.text_area("Quels seraient les vecteurs marketing pour toucher les cibles ? :")
-    q12 = st.text_area("Envie de nous dire quelque chose en plus ? :")
+    q12 = st.text_area("Envie de préciser quelque chose en plus pour bien poser le problème à résoudre ? :")
 
     if st.button("Générer le document de cadrage (.docx)"):
         # Création du document Word
