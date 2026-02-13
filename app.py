@@ -42,7 +42,7 @@ def convert_html_to_doc_format(html_content):
 
 st.title("SofIA - Assistant de Transition Énergétique")
 
-tab1, tab2 = st.tabs(["📂 Extraction & Export", "📝 Aide au Prompt "Contraintes""])
+tab1, tab2 = st.tabs(["📂 Extraction & Export", "📝 Aide au Prompt Contraintes"])
 
 # --- ONGLET 1 : EXTRACTION ---
 with tab1:
