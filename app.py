@@ -75,7 +75,7 @@ with tab1:
                             except: pass
                 st.download_button("📥 Télécharger le .zip", zip_buffer.getvalue(), "Sources.zip", "application/zip")
 
-# --- ONGLET 2 : AIDE AU PROMPT ---
+# --- ONGLET 2 : AIDE AU PROMPT "CONTRAINTES" ---
 with tab2:
     st.header("Aide à la définition du problème")
     st.info("SofIA a généré un fichier présentant le domaine considéré, le contexte, les problèmes et principaux verrous, les acteurs à rassembler ainsi que des propositions d'actions. Les questions permettent de préciser le problème à résoudre et les différentes contraintes.")
@@ -85,12 +85,16 @@ with tab2:
     
     st.markdown("Est ce que le problème à résoudre est considéré comme compliqué, complexe ou vicieux (wicked) ? [En savoir plus sur les types de problèmes](https://fr.wikipedia.org/wiki/Probl%C3%A8me_vicieux)")
     q2 = st.radio("Type de problème :", ["Compliqué", "Complexe", "Vicieux (Wicked)"])
-    
-    q3 = st.text_area("Quels sont les partenaires obligatoires à impliquer (en plus des acteurs identifiés par SofIA) :")
-    q4 = st.text_area("Quel est le budget éventuellement décrit sur plusieurs années ? :")
-    q5 = st.text_area("Quel est le planning général (jalons et livrables à 6 mois, 1 an, etc.) :")
-    q6 = st.text_area("Communication prévue ou contraintes de visibilité ADEME :")
-    q7 = st.text_area("Envie de nous dire quelque chose en plus ? :")
+
+    q3 = st.text_area("Est ce que les douleurs liées au problème sont réellement perçues par les potentiels clients ? ou d'autres acteurs à préciser ? :")
+    q4 = st.text_area("Quels sont les partenaires obligatoires à impliquer : futurs clients ou utilisateurs, activateurs qui vont aider et les potentiels compétiteurs ou acteurs qui vont freiner (en plus des acteurs identifiés par SofIA) : Mentionner les différents rôles et acteurs ci dessous")
+    q5 = st.text_area("Quels seraient les bénéfices tangibles pour les bénéficiaires de l'intervention ? pour l'ADEME ? pour l'intérêt collectif ? :")
+    q6 = st.text_area("Quels seraient les bénéfices intangibles pour les bénéficiaires de l'intervention ? pour l'ADEME ? pour l'intérêt collectif ? :")
+    q7 = st.text_area("Quel est le budget éventuellement décrit sur plusieurs années ? :")
+    q8 = st.text_area("Quel est le planning général (jalons et livrables à 6 mois, 1 an, etc.) :")
+    q9 = st.text_area("Y a t-il une communication prévue ou des contraintes de visibilité pour l'ADEME :")
+    q10 = st.text_area("Quels seraient les vecteurs marketing pour toucher les cibles ? :")
+    q11 = st.text_area("Envie de nous dire quelque chose en plus ? :")
 
     if st.button("Générer le document de cadrage (.docx)"):
         # Création du document Word
@@ -100,11 +104,15 @@ with tab2:
         data = {
             "Périmètre précis": q1,
             "Nature du problème": q2,
-            "Partenaires additionnels": q3,
-            "Budget prévisionnel": q4,
-            "Planning et Jalons": q5,
-            "Communication et Visibilité ADEME": q6,
-            "Informations complémentaires": q7
+            "Douleurs perçues": q3,
+            "Partenaires additionnels": q4,
+            "Bénéfices tangibles": q5,
+            "Bénéfices intangibles": q6,
+            "Budget prévisionnel": q7,
+            "Planning et Jalons": q8,
+            "Communication et Visibilité ADEME": q9,
+            "Vecteurs marketing": q10,
+            "Informations complémentaires": q11
         }
         
         for key, value in data.items():
