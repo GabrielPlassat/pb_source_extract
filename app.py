@@ -13,6 +13,8 @@ from docx.shared import Inches
 
 # Configuration de la page (DOIT être la première commande Streamlit)
 st.set_page_config(page_title="Architecte des Transitions", page_icon="🏗️", layout="wide")
+if 'fusion_generee' not in st.session_state:
+    st.session_state.fusion_generee = False
 
 def extract_text_from_file(uploaded_file):
     """Extrait le texte brut d'un fichier PDF, DOCX ou TXT."""
@@ -326,15 +328,32 @@ with tab4:
     if st.session_state.get("sofia_html") is None:
         st.warning("Veuillez d'abord importer le fichier chat_history.html dans l'onglet 2.")
     else:
+        # Bouton pour générer le document fusionné
         if st.button("Générer le document fusionné (.doc)"):
             merged_file = merge_html_and_constraints(
                 st.session_state.sofia_html,
                 st.session_state.cadrage
             )
+            st.session_state.merged_file = merged_file
+            st.session_state.fusion_generee = True
+
+        # Si le document a déjà été généré dans cette session
+        if st.session_state.get("fusion_generee", False) and st.session_state.get("merged_file") is not None:
             st.download_button(
                 label="📥 Télécharger le document fusionné",
-                data=merged_file,
+                data=st.session_state.merged_file,
                 file_name="Analyse_Sofia_et_Cadrage.doc",
                 mime="application/msword"
             )
+
+            st.markdown("---")
+            st.success("✅ Document fusionné généré avec succès.")
+
+            # Bouton pour ouvrir le GEM dans un nouvel onglet
+            gem_url = "https://gemini.google.com/gem/1y9w9p-YCpKER7F9enlRczopToIylE-NP?usp=sharing"
+            if st.button("➡️ Aller vers le GEM pour poursuivre l'analyse"):
+                # Utilisation de JavaScript pour ouvrir un nouvel onglet
+                js = f"window.open('{gem_url}', '_blank').focus();"
+                st.components.v1.html(f"<script>{js}</script>", height=0)
+
 
