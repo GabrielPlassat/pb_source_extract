@@ -45,6 +45,59 @@ st.title("Assistant pour formuler un problématique")
 tab1, tab2, tab3 = st.tabs(["📝 Aide au Prompt pour SofIA", "📂 Extraction & Export", "📝 Aide au Prompt Contraintes"])
 
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
+with tab1: 
+    st.header("Aide pour formuler le problème initial à SofIA")
+    st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE.")
+    
+    # Formulaire de questions
+    q1 = st.text_area("1. Action et Sujet : Comment réduire / augmenter / modifier puis indiquer votre sujet de façon synthétique", placeholder="ex: la pratique de la marche au quotidien")
+    q2 = st.text_input("2. Périmètre géographique :", placeholder="ex: dans tous les territoires")
+    q3 = st.text_area("3. Cibles visées en priorité :", placeholder="ex: toutes les personnes à tous les âges")
+    q4 = st.text_input("4. Objectif chiffré :", placeholder="ex: augmenter de 20% la part de la marche")
+    q5 = st.text_area("5. Informations complémentaires pour SofIA :")
+
+    if st.button("Générer le document de Prompt pour SofIA (.docx)"):
+        # Création du document Word
+        prompt_doc = Document()
+        prompt_doc.add_heading("Prompt pour SofIA", 0)
+        
+        # Construction de la phrase de prompt à partir des variables q1 à q5
+        # On utilise f"..." pour assembler le texte proprement
+        phrase_prompt = (
+            f"Comment {q1} dans {q2}, en ciblant plus particulièrement {q3}. "
+            f"Un premier objectif serait de {q4}. {q5}"
+        )
+        
+        question_expert = (
+            "Quelles sont les principales données dans ce domaine, les acteurs à mobiliser, "
+            "les paramètres clés à travailler, les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, "
+            "les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes, les règles de fonctionnement "
+            "du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème "
+            "et identifier de nouvelles solutions, les effets et conséquences systémiques liés à ce problème et aux futures "
+            "actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
+        )
+        
+        # Organisation dans le document Word
+        prompt_doc.add_heading("Votre base de prompt personnalisée :", level=1)
+        prompt_doc.add_paragraph(phrase_prompt)
+        
+        prompt_doc.add_heading("Questions d'approfondissement suggérées :", level=1)
+        prompt_doc.add_paragraph(question_expert)
+        
+        # Export
+        prompt_buffer = io.BytesIO()
+        prompt_doc.save(prompt_buffer)
+        prompt_buffer.seek(0)
+        
+        st.download_button(
+            label="📥 Télécharger votre prompt pour SofIA",
+            data=prompt_buffer,
+            file_name="Prompt_Initial_Sofia.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+
+
+# --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1:
     st.header("Aide pour formuler le problème initial à SofIA")
     st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE. Pour cela, vous allez lui poser une question dans le champs - Je souhaite poser une question. Pour cela, un prompt clair est nécessaire. Les champs à remplir ci dessous vous accompagnent et permettront de générer un prompt complet.")
