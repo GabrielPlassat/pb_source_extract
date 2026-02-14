@@ -42,10 +42,50 @@ def convert_html_to_doc_format(html_content):
 
 st.title("Assistant pour formuler un problématique")
 
-tab1, tab2 = st.tabs(["📂 Extraction & Export", "📝 Aide au Prompt Contraintes"])
+tab1, tab2, tab3 = st.tabs(["📝 Aide au Prompt pour SofIA"📂 Extraction & Export", "📝 Aide au Prompt Contraintes"])
 
-# --- ONGLET 1 : EXTRACTION ---
+# --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1:
+    st.header("Aide pour formuler le problème initial à SofIA")
+    st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE. Pour cela, vous allez lui poser une question dans le champs "Je souhaite poser une question". Pour cela, un prompt clair est nécessaire. Les champs à remplir ci dessous vous accompagnent et permettront de générer un prompt complet.")
+    st.info("Un exemple : Comment développer la pratique de la marche au quotidien dans tous les territoires pour réduire les consommations d'énergie et l'usage des véhicules thermiques, améliorer la santé ? Ce programme cible toutes les personnes à tous les âges. Un objectif serait d'augmenter de 20% la part de la marche dans les mobilités quotidiennes.")
+    
+    # Formulaire de questions
+    q1 = st.text_area("Reprendre et compléter ce début de question : Comment réduire ou augmenter ou modifier (ou un autre un verbe d'action) *puis indiquer votre sujet de façon synthétique* :")
+    q2 = st.text_area("Indiquer le périmètre géographique visé (France, Urbain ou Rural, ...) :")
+    q3 = st.text_area("Indiquer les cibles visés en priorité qui devront changer ou utiliser telle solution :")
+    q4 = st.text_area("Compléter la phrase : Un premier objectif serait de réduire ou augmenter ou (un autre verbe) de x %, y TWh, ...")
+    q5 = st.text_area("D'autres informations essentielles à fournir à SofIA pour l'aider à formuler la problématique générale ?:")
+
+    if st.button("Générer le document de Prompt pour SofIA (.docx)"):
+        # Création du document Word
+        prompt_doc = Document()
+        prompt_doc.add_heading("Prompt pour SofIA", 0)
+        
+        data = {
+            "Proposition de Prompt": q1, "dans" q2, "en ciblant plus particulièrement" q3. q4. q5.
+            Quelles sont les principales données dans ce domaine, les acteurs à mobiliser, les paramètres clés à travailler, les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, les projets ayant réussis, leurs résultats et ceux ayant échoués et leurs causes, les règles de fonctionnement du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème et identifier de nouvelles solutions, les effets et conséquences systémiques liés à ce problème et aux futures actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?
+        }
+        
+        for key, value in data.items():
+            prompt_doc.add_heading(key, level=1)
+            prompt_doc.add_paragraph(value if value else "Non précisé")
+        
+        # Export
+        prompt_buffer = io.BytesIO()
+        prompt_doc.save(prompt_buffer)
+        prompt_buffer.seek(0)
+        
+        st.download_button(
+            label="📥 Télécharger votre prompt à ajuster puis fournir à SofIA",
+            data=prompt_buffer,
+            file_name="Prompt_Sofia.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+
+
+# --- ONGLET 2 : EXTRACTION ---
+with tab2:
     st.header("Récupération des livrables")
     uploaded_file = st.file_uploader("Glissez votre fichier chat_history.html", type="html", key="uploader")
 
@@ -75,9 +115,9 @@ with tab1:
                             except: pass
                 st.download_button("📥 Télécharger le .zip", zip_buffer.getvalue(), "Sources.zip", "application/zip")
 
-# --- ONGLET 2 : AIDE AU PROMPT "CONTRAINTES" ---
-with tab2:
-    st.header("Aide à la définition du problème")
+# --- ONGLET 3 : AIDE AU PROMPT "CONTRAINTES" ---
+with tab3:
+    st.header("Aide pour compléter le problème avec un champs de contraintes")
     st.info("SofIA a généré un fichier présentant le domaine considéré, le contexte, les problèmes et principaux verrous, les acteurs à rassembler ainsi que des propositions d'actions. Les questions permettent de préciser le problème à résoudre et les différentes contraintes.")
 
     # Formulaire de questions
