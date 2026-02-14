@@ -9,6 +9,25 @@ from docx.oxml.shared import qn
 from docx.oxml import OxmlElement
 import docx
 import google.generativeai as genai
+import pypdf
+
+def extract_text_from_file(uploaded_file):
+    """Extrait le texte brut d'un fichier PDF, DOCX ou TXT."""
+    text = ""
+    try:
+        if uploaded_file.name.endswith('.pdf'):
+            reader = pypdf.PdfReader(uploaded_file)
+            for page in reader.pages:
+                text += page.extract_text() + "\n"
+        elif uploaded_file.name.endswith('.docx'):
+            doc = docx.Document(uploaded_file)
+            for para in doc.paragraphs:
+                text += para.text + "\n"
+        elif uploaded_file.name.endswith('.txt'):
+            text = uploaded_file.read().decode('utf-8')
+    except Exception as e:
+        return f"Erreur de lecture du fichier : {e}"
+    return text
 
 # --- HEADER (LOGO + TITRE PROJET) ---
 col_logo, col_titre = st.columns([1, 5])
@@ -293,74 +312,95 @@ with tab4:
     if not gemini_available:
         st.warning("⚠️ Pour activer l'IA, veuillez configurer votre clé API Gemini dans les secrets.")
     else:
-        st.info("Cet assistant peut analyser l'ensemble de votre dossier (Réponse SofIA + Cadrage) pour proposer une stratégie.")
+        st.info("Cet assistant analyse le dossier complet pour proposer une stratégie d'intervention.")
+
+        # --- ZONE DE CHARGEMENT DU PROBLÈME COMPLET ---
+        st.markdown("### 📂 Document de contexte (Optionnel)")
+        st.markdown("Chargez ici une note de cadrage, un rapport ou une description détaillée du problème.")
+        
+        uploaded_context = st.file_uploader(
+            "Formats recommandés : .docx (Word) ou .pdf", 
+            type=['docx', 'pdf', 'txt'],
+            key="context_uploader"
+        )
+        
+        if uploaded_context:
+            st.success(f"✅ Document '{uploaded_context.name}' prêt pour l'analyse.")
+
+        st.divider()
 
         # --- BOUTON D'ACTION STRATÉGIQUE ---
-        if st.button("🧠 Générer la Stratégie d'Intervention (Fusion des documents)"):
+        if st.button("🧠 Générer la Stratégie d'Intervention"):
             
-            # 1. Vérification des données sources
-            if not st.session_state.html_content:
-                st.error("❌ Erreur : Aucun fichier SofIA chargé dans l'Onglet 2.")
+            # 1. Vérification des données sources (Au moins Sofia OU le Document uploadé)
+            if not st.session_state.html_content and not uploaded_context:
+                st.error("❌ Erreur : Veuillez fournir au moins un fichier SofIA (Onglet 2) OU un document de contexte (ici).")
             else:
-                with st.spinner("Fusion des documents et analyse par l'Architecte..."):
+                with st.spinner("Analyse croisée des documents par l'Architecte..."):
                     try:
-                        # A. Extraction du texte de la réponse SofIA (HTML -> Texte brut)
-                        soup = BeautifulSoup(st.session_state.html_content, 'html.parser')
-                        texte_sofia = soup.get_text(separator="\n")
+                        # A. Extraction du texte de la réponse SofIA
+                        texte_sofia = "Aucune donnée SofIA fournie."
+                        if st.session_state.html_content:
+                            soup = BeautifulSoup(st.session_state.html_content, 'html.parser')
+                            texte_sofia = soup.get_text(separator="\n")
 
-                        # B. Formatage des données de Cadrage (Onglet 3)
-                        texte_cadrage = "--- DONNÉES DE CADRAGE ET CONTRAINTES ---\n"
+                        # B. Extraction du Document Uploadé (Nouveau)
+                        texte_doc_externe = "Aucun document supplémentaire fourni."
+                        if uploaded_context:
+                            texte_doc_externe = extract_text_from_file(uploaded_context)
+
+                        # C. Formatage des données de Cadrage (Onglet 3)
+                        texte_cadrage = "--- DONNÉES DE CADRAGE FORMULAIRE ---\n"
                         if st.session_state.cadrage:
                             for k, v in st.session_state.cadrage.items():
                                 texte_cadrage += f"- {k} : {v}\n"
                         else:
-                            texte_cadrage += "Aucune contrainte spécifique saisie dans l'onglet 3.\n"
+                            texte_cadrage += "Aucune contrainte spécifique saisie dans le formulaire.\n"
 
-                        # C. Construction du Prompt "Fusion"
+                        # D. Construction du Prompt "Fusion"
                         prompt_strategie = (
-                            "Tu es un expert en stratégie de transition écologique (Architecte des Transitions). "
-                            "Voici les données complètes du problème (Dossier technique + Contraintes terrain).\n\n"
-                            f"{texte_cadrage}\n\n"
-                            "--- ANALYSE TECHNIQUE PRÉALABLE (SOFIA) ---\n"
-                            f"{texte_sofia}\n\n"
+                            "Tu es un expert senior en stratégie de transition écologique (Rôle : Architecte des Transitions). "
+                            "Ton objectif est de définir le mode d'intervention optimal pour l'ADEME.\n\n"
+                            "Voici les sources d'informations à ta disposition :\n"
+                            f"1. NOTE DE CONTEXTE DÉTAILLÉE (Fichier joint) :\n{texte_doc_externe}\n\n"
+                            f"2. CONTRAINTES OPÉRATIONNELLES (Formulaire) :\n{texte_cadrage}\n\n"
+                            f"3. ANALYSE TECHNIQUE PRÉALABLE (Chatbot SofIA) :\n{texte_sofia}\n\n"
                             "--- CONSIGNE ---\n"
-                            "Propose le meilleur mode d'intervention ou une combinaison de modes d'intervention "
-                            "pour résoudre le problème présenté dans ces contenus fusionnés. "
-                            "Sois structuré, opérationnel et justifie tes choix par rapport aux contraintes du cadrage."
+                            "À partir de ces éléments, propose le meilleur mode d'intervention ou une combinaison de modes d'intervention "
+                            "pour résoudre le problème présenté.\n"
+                            "Ta réponse doit être :\n"
+                            "- Structurée (Contexte / Diagnostic / Proposition de mode d'intervention / Justification).\n"
+                            "- Opérationnelle (propose des actions concrètes).\n"
+                            "- Justifiée par rapport aux verrous identifiés dans les documents."
                         )
 
-                        # D. Envoi à Gemini
+                        # E. Envoi à Gemini
                         model = genai.GenerativeModel('gemini-1.5-flash')
                         response = model.generate_content(prompt_strategie)
 
-                        # E. Affichage du résultat
+                        # F. Affichage du résultat
                         st.session_state.messages.append({"role": "user", "content": "Génère la stratégie d'intervention basée sur le dossier complet."})
                         st.session_state.messages.append({"role": "assistant", "content": response.text})
-                        st.rerun() # Pour rafraîchir l'affichage du chat immédiatement
+                        st.rerun()
 
                     except Exception as e:
                         st.error(f"Erreur lors de l'analyse : {e}")
 
-        st.divider()
-
-        # --- INTERFACE DE CHAT CLASSIQUE ---
-        # Affichage de l'historique
+        # --- INTERFACE DE CHAT ---
         for message in st.session_state.messages:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
-        # Zone de saisie pour continuer la discussion sur la stratégie
         if prompt := st.chat_input("Posez une question sur la stratégie proposée..."):
             st.chat_message("user").markdown(prompt)
             st.session_state.messages.append({"role": "user", "content": prompt})
-
-            # Contexte glissant (on garde les derniers échanges en mémoire)
+            
+            # Contexte glissant
             chat_context = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages[-5:]])
             
             try:
                 model = genai.GenerativeModel('gemini-1.5-flash')
                 response = model.generate_content(chat_context)
-                
                 with st.chat_message("assistant"):
                     st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
