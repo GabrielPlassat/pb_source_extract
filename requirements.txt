@@ -2,5 +2,5 @@ streamlit
 beautifulsoup4
 requests
 python-docx
-google-generativeai
+google-generativeai>=0.7.0
 pypdf
