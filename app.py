@@ -319,9 +319,9 @@ with tab3:
 
 # --- ONGLET 4 : EVAL IA (FUSION) ---
 with tab4:
-    st.header("🤖 Génération de la Stratégie (Mode Externe)")
+    st.header("🤖 1er Agent EVAL")
     st.info(
-        "Ce module fusionne l'analyse SofIA (onglet 2) et vos contraintes de cadrage (onglet 3) "
+        "Il faut fournir à cet Agent EVAL l'analyse SofIA (onglet 2) et vos contraintes de cadrage (onglet 3) "
         "dans un seul document optimisé pour l'IA."
     )
 
@@ -350,8 +350,8 @@ with tab4:
             st.success("✅ Document fusionné généré avec succès.")
 
             # Bouton lien vers GEM (ouvre dans le même onglet, l’utilisateur peut Ctrl+clic pour nouvel onglet)
-            st.link_button("➡️ Aller vers le GEM pour poursuivre l'analyse", gem_url)
-            st.success("✅ Fournir le document généré au GEM et copier/coller le Prompt suivant : Pour résoudre le problème présenté dans le document joint et impliquer les acteurs identifiés, donne plusieurs modes d'intervention à privilégier de façon individuel ou en les combinant, en fournissant des justifications précises et indique pourquoi les autres ne conviennent pas. Commence par résumer le problème à résoudre.")
+            st.link_button("➡️ Aller vers l'Agent EVAL pour poursuivre l'analyse", gem_url)
+            st.success("✅ Fournir le document généré à l'Agent EVAL en pièce jointe et copier/coller le Prompt suivant : Pour résoudre le problème présenté dans le document joint et impliquer les acteurs identifiés, donne plusieurs modes d'intervention à privilégier de façon individuel ou en les combinant, en fournissant des justifications précises et indique pourquoi les autres ne conviennent pas. Commence par résumer le problème à résoudre.")
 
 
 
