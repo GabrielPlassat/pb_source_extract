@@ -83,8 +83,8 @@ with tab2:
     # Formulaire de questions
     q1 = st.text_area("Peut-on réduire le périmètre du problème sur un champs plus précis :")
     
-    st.markdown("Est ce que le problème à résoudre est considéré comme compliqué, complexe ou vicieux (wicked) ? [En savoir plus sur les problèmes vicieux](https://fr.wikipedia.org/wiki/Probl%C3%A8me_vicieux)")
-    q2 = st.radio("Type de problème :", ["Compliqué", "Complexe", "Vicieux (Wicked)"])
+    st.markdown("Est ce que le problème à résoudre est considéré comme compliqué, complexe ou vicieux (wicked) ? [Comprendre les différences](https://ademecloud-my.sharepoint.com/:b:/g/personal/gabriel_plassat_ademe_fr/IQB6qkN3Av0jSJIx8VBpilRIAYNfgfTtVLn0yf9kvh_LSio?e=YVwmLr) et [En savoir plus sur les problèmes Pernicieux](https://fr.wikipedia.org/wiki/Probl%C3%A8me_vicieux)")
+    q2 = st.radio("Type de problème :", ["Compliqué", "Complexe", "Pernicieux (Wicked)"])
 
     q3 = st.text_area("Est ce que les douleurs liées au problème sont réellement perçues par les potentiels clients ? ou d'autres acteurs à préciser ? :")
     q4 = st.text_area("Quels sont les partenaires obligatoires à impliquer : futurs clients ou utilisateurs, activateurs qui vont aider et les potentiels compétiteurs ou acteurs qui vont freiner (en plus des acteurs identifiés par SofIA) : Mentionner les différents rôles et acteurs ci dessous")
