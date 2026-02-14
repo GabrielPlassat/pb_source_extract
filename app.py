@@ -137,7 +137,7 @@ with tab2:
 # --- ONGLET 3 : AIDE AU PROMPT "CONTRAINTES" ---
 with tab3:
     st.header("3.Aide pour compléter le problème initial avec un champs de contraintes")
-    st.info("SofIA a généré une réponse présentant le domaine considéré, le contexte, les problèmes et principaux verrous, les acteurs à rassembler ainsi que des propositions d'actions. Les questions permettent de préciser le problème à résoudre et les différentes contraintes.")
+    st.info("SofIA a généré une réponse présentant le domaine considéré, le contexte, les problèmes et principaux verrous, les acteurs à rassembler ainsi que des propositions d'actions. Les questions ci-dessous vont permettre de préciser le problème à résoudre et les différentes contraintes.")
 
     # Formulaire de questions
     q1 = st.text_area("Peut-on réduire le périmètre du problème sur un champs plus précis :")
@@ -176,6 +176,7 @@ with tab3:
             "Informations complémentaires": q12
         }
         prompt_doc.add_heading("Relire, compléter si besoin et copier/coller ce texte à la fin du fichier de réponse de SofIA", 0)
+        prompt_doc.add_heading("Ce document complet est à relire, compléter, ajuster. Puis il sera fourni à un Assistant Eval (au format .pdf) pour proposer un mode d'intervention. Se connecter à Eval via https://m365.cloud.microsoft/chat/?titleId=T_7b923e69-c9aa-4317-d331-4647b285be26", 0)
 
         
         for key, value in data.items():
