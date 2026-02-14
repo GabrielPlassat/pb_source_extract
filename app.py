@@ -42,7 +42,7 @@ def convert_html_to_doc_format(html_content):
 
 st.title("Assistant pour formuler un problématique")
 
-tab1, tab2, tab3 = st.tabs(["📝 Aide au Prompt pour SofIA"📂 Extraction & Export", "📝 Aide au Prompt Contraintes"])
+tab1, tab2, tab3 = st.tabs(["📝 Aide au Prompt pour SofIA", "📂 Extraction & Export", "📝 Aide au Prompt Contraintes"])
 
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1:
