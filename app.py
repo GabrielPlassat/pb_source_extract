@@ -5,7 +5,6 @@ import io
 import zipfile
 import re
 from docx import Document
-
 from docx.oxml.shared import qn
 from docx.oxml import OxmlElement
 import docx
@@ -71,6 +70,12 @@ def add_hyperlink(paragraph, url, text):
     return hyperlink
 
 st.set_page_config(page_title="Aide à la formulation du problème", page_icon="⚡", layout="wide")
+# --- AJOUTER CE BLOC JUSTE APRÈS set_page_config ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    
+if "cadrage" not in st.session_state:
+    st.session_state.cadrage = {}
 
 # --- FONCTIONS DE CONVERSION ---
 
