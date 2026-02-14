@@ -47,7 +47,7 @@ tab1, tab2, tab3 = st.tabs(["📝 Aide au Prompt pour SofIA", "📂 Extraction &
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1:
     st.header("Aide pour formuler le problème initial à SofIA")
-    st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE. Pour cela, vous allez lui poser une question dans le champs "Je souhaite poser une question". Pour cela, un prompt clair est nécessaire. Les champs à remplir ci dessous vous accompagnent et permettront de générer un prompt complet.")
+    st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE. Pour cela, vous allez lui poser une question dans le champs - Je souhaite poser une question. Pour cela, un prompt clair est nécessaire. Les champs à remplir ci dessous vous accompagnent et permettront de générer un prompt complet.")
     st.info("Un exemple : Comment développer la pratique de la marche au quotidien dans tous les territoires pour réduire les consommations d'énergie et l'usage des véhicules thermiques, améliorer la santé ? Ce programme cible toutes les personnes à tous les âges. Un objectif serait d'augmenter de 20% la part de la marche dans les mobilités quotidiennes.")
     
     # Formulaire de questions
@@ -64,7 +64,7 @@ with tab1:
         
         data = {
             "Proposition de Prompt": q1, "dans" q2, "en ciblant plus particulièrement" q3. q4. q5.
-            Quelles sont les principales données dans ce domaine, les acteurs à mobiliser, les paramètres clés à travailler, les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, les projets ayant réussis, leurs résultats et ceux ayant échoués et leurs causes, les règles de fonctionnement du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème et identifier de nouvelles solutions, les effets et conséquences systémiques liés à ce problème et aux futures actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?
+            "Quelles sont les principales données dans ce domaine, les acteurs à mobiliser, les paramètres clés à travailler, les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, les projets ayant réussis, leurs résultats et ceux ayant échoués et leurs causes, les règles de fonctionnement du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème et identifier de nouvelles solutions, les effets et conséquences systémiques liés à ce problème et aux futures actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
         }
         
         for key, value in data.items():
