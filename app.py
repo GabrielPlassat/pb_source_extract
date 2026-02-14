@@ -145,7 +145,7 @@ if st.session_state.prompt_genere:
         st.markdown("---")
         st.success("✅ Document généré avec succès !")
         st.markdown("### 🚀 Étape suivante")
-        st.markdown("Connectez-vous maintenant à [Sofia](https://www.sofia-transition-ecologique.fr/) pour y coller votre prompt.")
+        st.markdown("Connectez-vous maintenant à [Sofia](https://www.sofia-transition-ecologique.fr/) pour copier/coller votre prompt généré.")
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
