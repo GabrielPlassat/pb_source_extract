@@ -87,7 +87,10 @@ with tab1:
     q3 = st.text_area("3. Cibles visées en priorité :", placeholder="ex: toutes les personnes à tous les âges")
     q4 = st.text_input("4. Objectif chiffré :", placeholder="ex: augmenter de 20% la part de la marche")
     q5 = st.text_area("5. Eventuellement, une action complémentaire proposée à SofIA ?", placeholder="ex: étudier plus particulièrement ...")
-
+    
+    if 'prompt_genere' not in st.session_state:
+        st.session_state.prompt_genere = False
+    
     if st.button("Générer le document de Prompt pour SofIA (.docx)"):
         # Création du document Word
         prompt_doc = Document()
@@ -114,6 +117,9 @@ with tab1:
             f"et identifier de nouvelles solutions, les effets et conséquences systémiques liés à ce problème et aux futures "
             f"actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
         )
+        prompt_buffer = io.BytesIO()
+        prompt_doc.save(prompt_buffer)
+        prompt_buffer.seek(0)
         
         # Organisation dans le document Word
         prompt_doc.add_heading("Votre base de prompt personnalisée :", level=1)
@@ -131,12 +137,15 @@ with tab1:
             label="📥 Télécharger votre prompt pour SofIA",
             data=prompt_buffer,
             file_name="Prompt_Initial_Sofia.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        on_click=lambda: st.session_state.update({"prompt_genere": True})
         )
         # --- À AJOUTER EN BAS DE L'ONGLET 1 ---
-with tab1:
-    st.markdown("---") # Ajoute une ligne de séparation visuelle
-    st.markdown("Connectez-vous maintenant à [SofIA](https://www.sofia-transition-ecologique.fr/) pour copier/coller le texte dans le champs Je souhaite poser une question")
+if st.session_state.prompt_genere:
+        st.markdown("---")
+        st.success("✅ Document généré avec succès !")
+        st.markdown("### 🚀 Étape suivante")
+        st.markdown("Connectez-vous maintenant à [Sofia](https://www.sofia-transition-ecologique.fr/) pour y coller votre prompt.")
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
