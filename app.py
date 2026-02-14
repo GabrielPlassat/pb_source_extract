@@ -98,7 +98,7 @@ tab1, tab2, tab3 = st.tabs(["📝 1.Aide au Prompt pour SofIA", "📂 2.Extracti
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1: 
     st.header("1.Aide pour formuler le problème initial à SofIA")
-    st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE.")
+    st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE. Les champs ci dessous sont à renseigner pour vous aider à rédiger un premier Prompt à fournir à SofIA.")
     
     # Formulaire de questions
     q1 = st.text_area("1. Action et Sujet : Comment réduire / augmenter / modifier puis indiquer votre sujet de façon synthétique", placeholder="ex: développer la pratique de la marche au quotidien ? augmenter la part des EnR ?")
