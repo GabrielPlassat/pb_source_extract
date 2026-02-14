@@ -96,6 +96,10 @@ if "messages" not in st.session_state:
 if "cadrage" not in st.session_state:
     st.session_state.cadrage = {}
 
+# --- AJOUTER CETTE LIGNE ---
+if "html_content" not in st.session_state:
+    st.session_state.html_content = None
+# ---------------------------
 # --- FONCTIONS DE CONVERSION ---
 
 def markdown_to_html_table(text):
