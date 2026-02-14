@@ -3,3 +3,4 @@ beautifulsoup4
 requests
 python-docx
 google-generativeai
+pypdf
