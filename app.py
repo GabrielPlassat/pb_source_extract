@@ -174,7 +174,7 @@ with tab0:
     st.header("0.Présentation du projet ACT")
     st.info("ACT est un projet exploratoire pour augmenter l'expert et l'aider à naviguer dans une forte incertitude systémique")
     st.info("Plusieurs Agents IA peuvent l'accompagner dans la conception de ses modes d'intervention")
-    st.error("Il s'agit de sélectionner les meilleurs modes ou combinaisons en fonction du problème à résoudre, du contexte et des contraintes")
+    st.error("Il s'agit de l'aider à concevoir les meilleurs modes d'interventions ou combinaisons en fonction du problème à résoudre, du contexte et des contraintes")
     st.info("Retrouver [ici](https://ademecloud-my.sharepoint.com/:x:/g/personal/gabriel_plassat_ademe_fr/IQDlZ56uAIX_RYwITobzHvDiAf72-NKLhjhpny3n2J1Tpyo?e=eClACW) tous les modes d'interventions identifiés. Pour toute question : [Gabriel Plassat](mailto:gabriel.plassat@ademe.fr)")
 
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
