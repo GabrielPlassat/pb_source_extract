@@ -337,6 +337,4 @@ with tab4:
                 file_name="Analyse_Sofia_et_Cadrage.doc",
                 mime="application/msword"
             )
-```
 
-Ce code conserve le HTML de SofIA (donc la mise en forme) en le plaçant dans un même fichier Word avec un bloc de contraintes construit en HTML (tableau), le tout généré via l’onglet 4.
