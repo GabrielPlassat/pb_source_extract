@@ -104,7 +104,8 @@ with tab1:
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
-    st.header("Récupération des livrables")
+    st.header("Récupération de l'exportation")
+    st.info("Cliquez sur Exporter la conversation avec le bouton à droite sur la barre bleue. Cela va générer un fichier chat_history.html.")
     uploaded_file = st.file_uploader("Glissez votre fichier chat_history.html", type="html", key="uploader")
 
     if uploaded_file:
