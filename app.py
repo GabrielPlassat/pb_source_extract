@@ -309,103 +309,101 @@ with tab3:
         
       # --- TAB 4 : ASSISTANT GEMINI (NOUVEAU) ---
 # --- TAB 4 : ASSISTANT GEMINI & STRATÉGIE ---
+# --- TAB 4 : STRATÉGIE (FUSION & EXPORT) ---
 with tab4:
-    st.header("🤖 L'Architecte des Transitions (IA)")
-    
-    if not gemini_available:
-        st.warning("⚠️ Pour activer l'IA, veuillez configurer votre clé API Gemini dans les secrets.")
+    st.header("🤖 Génération de la Stratégie (Mode Externe)")
+    st.info("Ce module fusionne l'analyse SofIA et vos contraintes de cadrage dans un seul document optimisé pour l'IA.")
+
+    # Vérification de la présence des données
+    has_sofia = st.session_state.get('html_content') is not None
+    has_cadrage = bool(st.session_state.get('cadrage'))
+
+    if not has_sofia and not has_cadrage:
+        st.warning("⚠️ Aucune donnée détectée. Veuillez d'abord remplir l'Onglet 1 (Cadrage) ou importer un fichier dans l'Onglet 2.")
     else:
-        st.info("Cet assistant analyse le dossier complet pour proposer une stratégie d'intervention.")
+        st.write("Cliquez ci-dessous pour créer le dossier complet à fournir à l'assistant.")
 
-        # --- ZONE DE CHARGEMENT DU PROBLÈME COMPLET ---
-        st.markdown("### 📂 Document de contexte (Optionnel)")
-        st.markdown("Chargez ici une note de cadrage, un rapport ou une description détaillée du problème.")
-        
-        uploaded_context = st.file_uploader(
-            "Formats recommandés : .docx (Word) ou .pdf", 
-            type=['docx', 'pdf', 'txt'],
-            key="context_uploader"
-        )
-        
-        if uploaded_context:
-            st.success(f"✅ Document '{uploaded_context.name}' prêt pour l'analyse.")
-
-        st.divider()
-
-        # --- BOUTON D'ACTION STRATÉGIQUE ---
-        if st.button("🧠 Générer la Stratégie d'Intervention"):
+        # --- BOUTON DE FUSION ---
+        if st.button("🔄 Fusionner les documents pour le GEM"):
             
-            # 1. Vérification des données sources (Au moins Sofia OU le Document uploadé)
-            if not st.session_state.html_content and not uploaded_context:
-                st.error("❌ Erreur : Veuillez fournir au moins un fichier SofIA (Onglet 2) OU un document de contexte (ici).")
+            # 1. Création du document Word
+            fusion_doc = Document()
+            
+            # 2. Ajout du PROMPT EN TÊTE (Pour que l'IA sache quoi faire immédiatement)
+            fusion_doc.add_heading("INSTRUCTIONS POUR L'ASSISTANT IA", 0)
+            p = fusion_doc.add_paragraph()
+            runner = p.add_run("CONSIGNE : Propose le meilleur mode d'intervention ou une combinaison de modes d'intervention pour résoudre le problème présenté dans ce dossier. Tes propositions doivent être opérationnelles et justifiées par les contraintes ci-dessous.")
+            runner.bold = True
+            
+            # 3. Ajout du CADRAGE (Onglet 3)
+            fusion_doc.add_heading("PARTIE 1 : CONTRAINTES ET CADRAGE", 1)
+            if st.session_state.cadrage:
+                table = fusion_doc.add_table(rows=1, cols=2)
+                table.style = 'Table Grid'
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Critère'
+                hdr_cells[1].text = 'Valeur'
+                
+                for k, v in st.session_state.cadrage.items():
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(k)
+                    row_cells[1].text = str(v)
             else:
-                with st.spinner("Analyse croisée des documents par l'Architecte..."):
-                    try:
-                        # A. Extraction du texte de la réponse SofIA
-                        texte_sofia = "Aucune donnée SofIA fournie."
-                        if st.session_state.html_content:
-                            soup = BeautifulSoup(st.session_state.html_content, 'html.parser')
-                            texte_sofia = soup.get_text(separator="\n")
+                fusion_doc.add_paragraph("Aucune contrainte spécifique renseignée.")
 
-                        # B. Extraction du Document Uploadé (Nouveau)
-                        texte_doc_externe = "Aucun document supplémentaire fourni."
-                        if uploaded_context:
-                            texte_doc_externe = extract_text_from_file(uploaded_context)
+            # 4. Ajout de l'ANALYSE SOFIA (Onglet 2)
+            fusion_doc.add_heading("PARTIE 2 : ANALYSE TECHNIQUE (Source SofIA)", 1)
+            if st.session_state.html_content:
+                # Nettoyage simple du HTML vers Texte pour le Word
+                soup = BeautifulSoup(st.session_state.html_content, 'html.parser')
+                texte_brut = soup.get_text(separator="\n")
+                fusion_doc.add_paragraph(texte_brut)
+            else:
+                fusion_doc.add_paragraph("Pas de données SofIA fournies.")
 
-                        # C. Formatage des données de Cadrage (Onglet 3)
-                        texte_cadrage = "--- DONNÉES DE CADRAGE FORMULAIRE ---\n"
-                        if st.session_state.cadrage:
-                            for k, v in st.session_state.cadrage.items():
-                                texte_cadrage += f"- {k} : {v}\n"
-                        else:
-                            texte_cadrage += "Aucune contrainte spécifique saisie dans le formulaire.\n"
+            # 5. Sauvegarde en mémoire
+            buffer = io.BytesIO()
+            fusion_doc.save(buffer)
+            buffer.seek(0)
 
-                        # D. Construction du Prompt "Fusion"
-                        prompt_strategie = (
-                            "Tu es un expert senior en stratégie de transition écologique (Rôle : Architecte des Transitions). "
-                            "Ton objectif est de définir le mode d'intervention optimal pour l'ADEME.\n\n"
-                            "Voici les sources d'informations à ta disposition :\n"
-                            f"1. NOTE DE CONTEXTE DÉTAILLÉE (Fichier joint) :\n{texte_doc_externe}\n\n"
-                            f"2. CONTRAINTES OPÉRATIONNELLES (Formulaire) :\n{texte_cadrage}\n\n"
-                            f"3. ANALYSE TECHNIQUE PRÉALABLE (Chatbot SofIA) :\n{texte_sofia}\n\n"
-                            "--- CONSIGNE ---\n"
-                            "À partir de ces éléments, propose le meilleur mode d'intervention ou une combinaison de modes d'intervention "
-                            "pour résoudre le problème présenté.\n"
-                            "Ta réponse doit être :\n"
-                            "- Structurée (Contexte / Diagnostic / Proposition de mode d'intervention / Justification).\n"
-                            "- Opérationnelle (propose des actions concrètes).\n"
-                            "- Justifiée par rapport aux verrous identifiés dans les documents."
-                        )
+            # Stockage dans la session pour ne pas perdre le bouton de téléchargement au rechargement
+            st.session_state.fusion_buffer = buffer
 
-                        # E. Envoi à Gemini
-                        model = genai.GenerativeModel('gemini-1.5-flash')
-                        response = model.generate_content(prompt_strategie)
-
-                        # F. Affichage du résultat
-                        st.session_state.messages.append({"role": "user", "content": "Génère la stratégie d'intervention basée sur le dossier complet."})
-                        st.session_state.messages.append({"role": "assistant", "content": response.text})
-                        st.rerun()
-
-                    except Exception as e:
-                        st.error(f"Erreur lors de l'analyse : {e}")
-
-        # --- INTERFACE DE CHAT ---
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-
-        if prompt := st.chat_input("Posez une question sur la stratégie proposée..."):
-            st.chat_message("user").markdown(prompt)
-            st.session_state.messages.append({"role": "user", "content": prompt})
+        # --- AFFICHAGE DU RÉSULTAT ---
+        if 'fusion_buffer' in st.session_state:
+            st.success("✅ Dossier fusionné prêt !")
             
-            # Contexte glissant
-            chat_context = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages[-5:]])
+            col_dl, col_link = st.columns(2)
             
-            try:
-                model = genai.GenerativeModel('gemini-1.5-flash')
-                response = model.generate_content(chat_context)
-                with st.chat_message("assistant"):
-                    st.markdown(response.text)
-                st.session_state.messages.append({"role": "assistant", "content": response.text})
-            except Exception as e:
-                st.error(f"Erreur : {e}")
+            with col_dl:
+                st.download_button(
+                    label="📥 1. Télécharger le Dossier (.docx)",
+                    data=st.session_state.fusion_buffer,
+                    file_name="Dossier_Strategie_Complet.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                )
+            
+            with col_link:
+                # Remplacez l'URL ci-dessous par celle de votre GEM spécifique
+                url_gem = "https://gemini.google.com/app" 
+                
+                st.markdown(f"""
+                <a href="{url_gem}" target="_blank" style="text-decoration:none;">
+                    <button style="
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: #ff4b4b;
+                        color: white;
+                        padding: 0.5rem 1rem;
+                        border-radius: 0.5rem;
+                        border: none;
+                        font-weight: 600;
+                        width: 100%;
+                        cursor: pointer;
+                        ">
+                        🚀 2. Accéder au GEM
+                    </button>
+                </a>
+                """, unsafe_allow_html=True)
+                st.caption("Cliquez pour ouvrir l'assistant, puis glissez-y le fichier téléchargé.")
