@@ -50,7 +50,7 @@ with tab1:
     st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE.")
     
     # Formulaire de questions
-    q1 = st.text_area("1. Action et Sujet : Comment réduire / augmenter / modifier puis indiquer votre sujet de façon synthétique", placeholder="ex: la pratique de la marche au quotidien")
+    q1 = st.text_area("1. Action et Sujet : Comment réduire / augmenter / modifier puis indiquer votre sujet de façon synthétique", placeholder="ex: développer la pratique de la marche au quotidien ? augmenter la part des EnR ?")
     q2 = st.text_input("2. Périmètre géographique :", placeholder="ex: dans tous les territoires")
     q3 = st.text_area("3. Cibles visées en priorité :", placeholder="ex: toutes les personnes à tous les âges")
     q4 = st.text_input("4. Objectif chiffré :", placeholder="ex: augmenter de 20% la part de la marche")
@@ -66,23 +66,20 @@ with tab1:
         phrase_prompt = (
             f"Comment {q1} dans {q2}, en ciblant plus particulièrement {q3}. "
             f"Un premier objectif serait de {q4}. {q5}"
-        )
-        
-        question_expert = (
-            "Quelles sont les principales données dans ce domaine, les acteurs à mobiliser, "
-            "les paramètres clés à travailler, les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, "
-            "les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes, les règles de fonctionnement "
-            "du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème "
-            "et identifier de nouvelles solutions, les effets et conséquences systémiques liés à ce problème et aux futures "
-            "actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
+            f"Quelles sont les principales données dans ce domaine, les acteurs à mobiliser, "
+            f"les paramètres clés à travailler, les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, "
+            f"les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes, les règles de fonctionnement "
+            f"du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème "
+            f"et identifier de nouvelles solutions, les effets et conséquences systémiques liés à ce problème et aux futures "
+            f"actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
         )
         
         # Organisation dans le document Word
         prompt_doc.add_heading("Votre base de prompt personnalisée :", level=1)
         prompt_doc.add_paragraph(phrase_prompt)
         
-        prompt_doc.add_heading("Questions d'approfondissement suggérées :", level=1)
-        prompt_doc.add_paragraph(question_expert)
+        prompt_doc.add_heading("Relire et reformuler si besoin avant de copier/coller dans Sofia à gauche - Je souhaite poser une question :", level=1)
+  
         
         # Export
         prompt_buffer = io.BytesIO()
