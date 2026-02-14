@@ -106,7 +106,7 @@ with tab1:
 with tab2:
     st.header("2.Récupération de l'exportation")
     st.info("Vous avez copié/collé le prompt dans [SofIA](https://www.sofia-transition-ecologique.fr/). SofIA a généré une réponse. Cliquez sur Exporter la conversation avec le bouton à droite sur la barre bleue. Cela va générer un fichier chat_history.html.")
-    uploaded_file = st.file_uploader("Glissez votre fichier chat_history.html", type="html", key="uploader")
+    uploaded_file = st.file_uploader("Glissez votre fichier chat_history.html ci dessous", type="html", key="uploader")
 
     if uploaded_file:
         content = uploaded_file.read().decode('utf-8')
@@ -115,7 +115,7 @@ with tab2:
         with col1:
             st.subheader("📄 Export Document")
             doc_file = convert_html_to_doc_format(content)
-            st.download_button("📥 Télécharger l'historique (.doc)", doc_file, "Historique_Sofia.doc", "application/msword")
+            st.download_button("📥 Télécharger la réponse de SofIA au format(.doc)", doc_file, "Reponse_Sofia.doc", "application/msword")
             
         with col2:
             st.subheader("📚 Sources PDF")
@@ -136,8 +136,8 @@ with tab2:
 
 # --- ONGLET 3 : AIDE AU PROMPT "CONTRAINTES" ---
 with tab3:
-    st.header("3.Aide pour compléter le problème avec un champs de contraintes")
-    st.info("SofIA a généré un fichier présentant le domaine considéré, le contexte, les problèmes et principaux verrous, les acteurs à rassembler ainsi que des propositions d'actions. Les questions permettent de préciser le problème à résoudre et les différentes contraintes.")
+    st.header("3.Aide pour compléter le problème initial avec un champs de contraintes")
+    st.info("SofIA a généré une réponse présentant le domaine considéré, le contexte, les problèmes et principaux verrous, les acteurs à rassembler ainsi que des propositions d'actions. Les questions permettent de préciser le problème à résoudre et les différentes contraintes.")
 
     # Formulaire de questions
     q1 = st.text_area("Peut-on réduire le périmètre du problème sur un champs plus précis :")
@@ -149,7 +149,7 @@ with tab3:
     q4 = st.text_area("Quels sont les partenaires obligatoires à impliquer : futurs clients ou utilisateurs, activateurs qui vont aider et les potentiels compétiteurs ou acteurs qui vont freiner (en plus des acteurs identifiés par SofIA) : Mentionner les différents rôles et acteurs ci dessous")
     q5 = st.text_area("Quels seraient les bénéfices tangibles pour les bénéficiaires de l'intervention ? pour l'ADEME ? pour l'intérêt collectif ? :")
     q6 = st.text_area("Quels seraient les bénéfices intangibles pour les bénéficiaires de l'intervention ? pour l'ADEME ? pour l'intérêt collectif ? :")
-    q7 = st.text_area("Quels sont les objectifs opposables de l'intervention de l'ADEME de façon chiffrée ? Par ex. atteindre x TWh en 2030, réduire d'un facteur 2 ou 50% les émissions de X ou les parts modales de Y ... :")
+    q7 = st.text_area("Quels sont les objectifs [opposables](https://www.icopilots.com/discours-il-opposable/) de l'intervention de l'ADEME de façon chiffrée ? Par ex. atteindre x TWh en 2030, réduire d'un facteur 2 ou 50% les émissions de X ou les parts modales de Y ... :")
     q8 = st.text_area("Quel est le budget éventuellement décrit sur plusieurs années ? :")
     q9 = st.text_area("Quel est le planning général (jalons et livrables à 6 mois, 1 an, etc.) :")
     q10 = st.text_area("Y a t-il une communication prévue ou des contraintes de visibilité pour l'ADEME :")
@@ -175,6 +175,8 @@ with tab3:
             "Vecteurs marketing": q11,
             "Informations complémentaires": q12
         }
+        prompt_doc.add_heading("Relire, compléter si besoin et copier/coller ce texte à la fin du fichier de réponse de SofIA", 0)
+
         
         for key, value in data.items():
             prompt_doc.add_heading(key, level=1)
