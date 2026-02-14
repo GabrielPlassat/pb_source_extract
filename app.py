@@ -379,7 +379,7 @@ with tab4:
                         )
 
                         # E. Envoi à Gemini
-                        model = genai.GenerativeModel('gemini-pro')
+                        model = genai.GenerativeModel('gemini-1.5-flash')
                         response = model.generate_content(prompt_strategie)
 
                         # F. Affichage du résultat
@@ -403,7 +403,7 @@ with tab4:
             chat_context = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages[-5:]])
             
             try:
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 response = model.generate_content(chat_context)
                 with st.chat_message("assistant"):
                     st.markdown(response.text)
