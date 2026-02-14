@@ -159,7 +159,7 @@ with tab3:
     if st.button("Générer le document de cadrage (.docx)"):
         # Création du document Word
         prompt_doc = Document()
-        prompt_doc.add_heading("Cadrage du Problème & Éléments de Prompt", 0)
+        prompt_doc.add_heading("Cadrage du Problème & Prompt pour Eval", 0)
         
         data = {
             "Périmètre précis": q1,
@@ -175,8 +175,8 @@ with tab3:
             "Vecteurs marketing": q11,
             "Informations complémentaires": q12
         }
-        prompt_doc.add_heading("Relire, compléter si besoin et copier/coller ce texte à la fin du fichier de réponse de SofIA", 0)
-        prompt_doc.add_heading("Ce document complet est à relire, compléter, ajuster. Puis il sera fourni à un Assistant Eval (au format .pdf) pour proposer un mode d'intervention. Se connecter à Eval via https://m365.cloud.microsoft/chat/?titleId=T_7b923e69-c9aa-4317-d331-4647b285be26", 0)
+        prompt_doc.add_heading("Relire, compléter si besoin et copier/coller ce texte à la fin du fichier de réponse de SofIA", 1)
+        prompt_doc.add_heading("Ce document complet est à relire, compléter, ajuster. Puis il sera fourni à un Assistant Eval (au format .pdf) pour proposer un mode d'intervention. Se connecter à Eval via https://m365.cloud.microsoft/chat/?titleId=T_7b923e69-c9aa-4317-d331-4647b285be26", 1)
 
         
         for key, value in data.items():
