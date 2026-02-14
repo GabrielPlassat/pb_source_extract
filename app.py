@@ -133,6 +133,10 @@ with tab1:
             file_name="Prompt_Initial_Sofia.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         )
+        # --- À AJOUTER EN BAS DE L'ONGLET 1 ---
+with tab1:
+    st.markdown("---") # Ajoute une ligne de séparation visuelle
+    st.markdown("Connectez-vous maintenant à [SofIA](https://www.sofia-transition-ecologique.fr/) pour copier/coller le texte dans le champs Je souhaite poser une question")
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
