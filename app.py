@@ -9,6 +9,7 @@ from docx import Document
 from docx.oxml.shared import qn
 from docx.oxml import OxmlElement
 import docx
+import google.generativeai as genai
 
 # --- HEADER (LOGO + TITRE PROJET) ---
 col_logo, col_titre = st.columns([1, 5])
@@ -27,6 +28,18 @@ with col_titre:
             <h2 style='color: #2E4053;'>Projet Exploratoire Formation IMT - l'Architecte des Transitions</h2>
         </div>
     """, unsafe_allow_html=True)
+
+# Configuration de la page
+st.set_page_config(page_title="Architecte des Transitions", page_icon="🏗️", layout="wide")
+
+# --- CONFIGURATION GEMINI ---
+# On tente de récupérer la clé API depuis les secrets Streamlit
+try:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    gemini_available = True
+except Exception:
+    gemini_available = False
+
 
 st.markdown("---") # Ligne de séparation horizontale
 def add_hyperlink(paragraph, url, text):
@@ -93,7 +106,7 @@ def convert_html_to_doc_format(html_content):
 
 st.title("Assistant pour formuler un problématique")
 
-tab1, tab2, tab3 = st.tabs(["📝 1.Aide au Prompt pour SofIA", "📂 2.Extraction & Export", "📝 3.Aide au Prompt Contraintes"])
+tab1, tab2, tab3 = st.tabs(["📝 1.Aide au Prompt pour SofIA", "📂 2.Extraction & Export", "📝 3.Aide au Prompt Contraintes", "🤖 4. Eval IA"])
 
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1: 
@@ -266,3 +279,35 @@ with tab3:
             file_name="Cadrage_Projet_Sofia.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         )
+        
+      # --- TAB 4 : ASSISTANT GEMINI (NOUVEAU) ---
+with tab4:
+    st.header("🤖 Discuter avec Eval (Gemini)")
+    
+    if not gemini_available:
+        st.error("⚠️ Clé API Gemini manquante. Ajoutez GEMINI_API_KEY dans vos Secrets Streamlit.")
+    else:
+        st.markdown("Posez des questions sur le projet, demandez des résumés ou des idées d'innovation.")
+
+        # Affichage de l'historique
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+        # Zone de saisie utilisateur
+        if prompt := st.chat_input("Votre question..."):
+            # 1. Afficher le message utilisateur
+            st.chat_message("user").markdown(prompt)
+            st.session_state.messages.append({"role": "user", "content": prompt})
+
+            # 2. Appel à Gemini
+            try:
+                model = genai.GenerativeModel('gemini-pro')
+                response = model.generate_content(prompt)
+                
+                # 3. Afficher la réponse
+                with st.chat_message("assistant"):
+                    st.markdown(response.text)
+                st.session_state.messages.append({"role": "assistant", "content": response.text})
+            except Exception as e:
+                st.error(f"Erreur Gemini : {e}")  
