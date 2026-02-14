@@ -160,7 +160,7 @@ st.markdown("---")
 st.title("Assistant pour formuler un problématique et utiliser plusieurs Agents")
 
 tab0, tab1, tab2, tab3, tab4 = st.tabs([
-    "📝 0.Présentation du projet 
+    "📝 0.Présentation du projet", 
     "📝 1.Aide au Prompt pour SofIA",
     "📂 2.Extraction & Export",
     "📝 3.Aide au Prompt Contraintes",
