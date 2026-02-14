@@ -6,6 +6,38 @@ import zipfile
 import re
 from docx import Document
 
+from docx.oxml.shared import qn
+from docx.oxml import OxmlElement
+import docx
+
+def add_hyperlink(paragraph, url, text):
+    """Insère un hyperlien cliquable dans un paragraphe Word."""
+    part = paragraph.part
+    r_id = part.relate_to(url, docx.opc.constants.RELATIONSHIP_TYPE.HYPERLINK, is_external=True)
+
+    hyperlink = OxmlElement('w:hyperlink')
+    hyperlink.set(qn('r:id'), r_id)
+
+    new_run = OxmlElement('w:r')
+    rPr = OxmlElement('w:rPr')
+
+    # Appliquer le style bleu et souligné
+    c = OxmlElement('w:color')
+    c.set(qn('w:val'), '0000FF')
+    rPr.append(c)
+    u = OxmlElement('w:u')
+    u.set(qn('w:val'), 'single')
+    rPr.append(u)
+
+    new_run.append(rPr)
+    t = OxmlElement('w:t')
+    t.text = text
+    new_run.append(t)
+    hyperlink.append(new_run)
+
+    paragraph._p.append(hyperlink)
+    return hyperlink
+
 st.set_page_config(page_title="Aide à la formulation du problème", page_icon="⚡", layout="wide")
 
 # --- FONCTIONS DE CONVERSION ---
@@ -160,7 +192,13 @@ with tab3:
         # Création du document Word
         prompt_doc = Document()
         prompt_doc.add_heading("Cadrage du Problème & Prompt pour Eval", 0)
-        
+
+        # Création du paragraphe de conclusion avec le lien
+        p = prompt_doc.add_paragraph("Ce document complet est à relire, compléter, ajuster. Puis il sera fourni à un Assistant Eval (au format .pdf) pour proposer un mode d'intervention. Se connecter à ")
+        # On ajoute le lien cliquable vers Eval
+        url_eval = "https://m365.cloud.microsoft/chat/?titleId=T_7b923e69-c9aa-4317-d331-4647b285be26"
+        add_hyperlink(p, url_eval, "Eval")
+       
         data = {
             "Périmètre précis": q1,
             "Nature du problème": q2,
