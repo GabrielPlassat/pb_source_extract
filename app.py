@@ -46,7 +46,7 @@ tab1, tab2, tab3 = st.tabs(["📝 Aide au Prompt pour SofIA", "📂 Extraction &
 
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1: 
-    st.header("Aide pour formuler le problème initial à SofIA")
+    st.header("1.Aide pour formuler le problème initial à SofIA")
     st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE.")
     
     # Formulaire de questions
@@ -87,7 +87,7 @@ with tab1:
         prompt_doc.add_heading("Votre base de prompt personnalisée :", level=1)
         prompt_doc.add_paragraph(phrase_prompt)
         
-        prompt_doc.add_heading("Relire et reformuler si besoin avant de copier/coller dans Sofia", level=1)
+        prompt_doc.add_heading("Relire et reformuler si besoin avant de copier/coller dans Sofia : https://www.sofia-transition-ecologique.fr/", level=1)
   
         
         # Export
@@ -104,7 +104,7 @@ with tab1:
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
-    st.header("Récupération de l'exportation")
+    st.header("2.Récupération de l'exportation")
     st.info("Cliquez sur Exporter la conversation avec le bouton à droite sur la barre bleue. Cela va générer un fichier chat_history.html.")
     uploaded_file = st.file_uploader("Glissez votre fichier chat_history.html", type="html", key="uploader")
 
@@ -136,7 +136,7 @@ with tab2:
 
 # --- ONGLET 3 : AIDE AU PROMPT "CONTRAINTES" ---
 with tab3:
-    st.header("Aide pour compléter le problème avec un champs de contraintes")
+    st.header("3.Aide pour compléter le problème avec un champs de contraintes")
     st.info("SofIA a généré un fichier présentant le domaine considéré, le contexte, les problèmes et principaux verrous, les acteurs à rassembler ainsi que des propositions d'actions. Les questions permettent de préciser le problème à résoudre et les différentes contraintes.")
 
     # Formulaire de questions
