@@ -101,7 +101,7 @@ with tab1:
     st.info("SofIA va être utilisé pour rédiger la problématique complète en utilisant sa base de connaissance des études et guides sur tous les domaines de la TE. Les champs ci dessous sont à renseigner pour vous aider à rédiger un premier Prompt à fournir à SofIA.")
     
     # Formulaire de questions
-    q1 = st.text_area("1. Action et Sujet : Comment réduire / augmenter / modifier puis indiquer votre sujet de façon synthétique", placeholder="ex: développer la pratique de la marche au quotidien ? augmenter la part des EnR ?")
+    q1 = st.text_area("1. Votre objectif principal (commencer par un verbe) : Réduire / augmenter / modifier ... votre sujet", placeholder="ex: développer la pratique de la marche au quotidien ? augmenter la part des EnR ?")
     q2 = st.text_input("2. Périmètre géographique :", placeholder="ex: dans tous les territoires")
     q3 = st.text_area("3. Cibles visées en priorité :", placeholder="ex: toutes les personnes à tous les âges")
     q4 = st.text_input("4. Objectif chiffré :", placeholder="ex: augmenter de 20% la part de la marche")
