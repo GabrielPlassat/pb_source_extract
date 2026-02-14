@@ -105,7 +105,7 @@ with tab1:
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
     st.header("2.Récupération de l'exportation")
-    st.info("Cliquez sur Exporter la conversation avec le bouton à droite sur la barre bleue. Cela va générer un fichier chat_history.html.")
+    st.info("Vous avez copié/collé le prompt dans [SofIA](https://www.sofia-transition-ecologique.fr/). SofIA a généré une réponse. Cliquez sur Exporter la conversation avec le bouton à droite sur la barre bleue. Cela va générer un fichier chat_history.html.")
     uploaded_file = st.file_uploader("Glissez votre fichier chat_history.html", type="html", key="uploader")
 
     if uploaded_file:
