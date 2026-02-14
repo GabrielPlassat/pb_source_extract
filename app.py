@@ -1,6 +1,3 @@
-Voici une version adaptée de ton script qui fusionne, dans l’onglet 4, le HTML importé dans l’onglet 2 et le texte de cadrage saisi dans l’onglet 3, en produisant un document Word qui conserve au mieux la **forme** du HTML tout en ajoutant une section structurée pour les contraintes.
-
-```python
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
