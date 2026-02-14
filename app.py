@@ -213,8 +213,7 @@ with tab3:
             "Vecteurs marketing": q11,
             "Informations complémentaires": q12
         }
-        prompt_doc.add_heading("Ce document complet est à relire, compléter, ajuster. Puis il sera fourni à un Assistant Eval (au format .pdf) pour proposer un mode d'intervention. Se connecter à [Eval](https://m365.cloud.microsoft/chat/?titleId=T_7b923e69-c9aa-4317-d331-4647b285be26) via https://m365.cloud.microsoft/chat/?titleId=T_7b923e69-c9aa-4317-d331-4647b285be26", 1)
-
+     
         
         for key, value in data.items():
             prompt_doc.add_heading(key, level=1)
