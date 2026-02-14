@@ -310,7 +310,6 @@ with tab3:
         
       # --- TAB 4 : ASSISTANT GEMINI (NOUVEAU) ---
 # --- TAB 4 : ASSISTANT GEMINI & STRATÉGIE ---
-# --- TAB 4 : STRATÉGIE (FUSION & EXPORT) ---
 with tab4:
     st.header("🤖 Génération de la Stratégie (Mode Externe)")
     st.info("Ce module fusionne l'analyse SofIA et vos contraintes de cadrage dans un seul document optimisé pour l'IA.")
@@ -330,44 +329,79 @@ with tab4:
             # 1. Création du document Word
             fusion_doc = Document()
             
-            # 2. Ajout du PROMPT EN TÊTE (Pour que l'IA sache quoi faire immédiatement)
-            fusion_doc.add_heading("INSTRUCTIONS POUR L'ASSISTANT IA", 0)
-            p = fusion_doc.add_paragraph()
-            runner = p.add_run("CONSIGNE : Propose le meilleur mode d'intervention ou une combinaison de modes d'intervention pour résoudre le problème présenté dans ce dossier. Tes propositions doivent être opérationnelles et justifiées par les contraintes ci-dessous.")
-            runner.bold = True
+# --- 1. META-PROMPT (Le Cerveau) ---
+            # On donne un rôle et une tâche précise à l'IA
+            fusion_doc.add_heading("PROMPT MASTER POUR L'ASSISTANT IA", 0)
             
-            # 3. Ajout du CADRAGE (Onglet 3)
-            fusion_doc.add_heading("PARTIE 1 : CONTRAINTES ET CADRAGE", 1)
+            intro = fusion_doc.add_paragraph()
+            intro.add_run("RÔLE : ").bold = True
+            intro.add_run("Tu es un expert senior en stratégie de transition écologique et en ingénierie de projet complexe.\n")
+            
+            tache = fusion_doc.add_paragraph()
+            tache.add_run("TÂCHE : ").bold = True
+            tache.add_run("Analyse les documents ci-joints (Contexte, Contraintes, Analyse Technique) pour proposer une stratégie d'intervention optimale.\n")
+            
+            livrable = fusion_doc.add_paragraph()
+            livrable.add_run("FORMAT ATTENDU : ").bold = True
+            livrable.add_run("Une note de cadrage stratégique comprenant :\n")
+            livrable.add_run("1. Un diagnostic synthétique des verrous et opportunités.\n")
+            livrable.add_run("2. La proposition du meilleur mode d'intervention (ou mix) justifiée par les contraintes.\n")
+            livrable.add_run("3. Une feuille de route opérationnelle (court/moyen terme).\n")
+            
+            fusion_doc.add_page_break()
+
+            # --- 2. CONTEXTE & CONTRAINTES (Le Terrain) ---
+            fusion_doc.add_heading("DOCUMENT 1 : CADRAGE ET CONTRAINTES", 1)
+            fusion_doc.add_paragraph("Voici les paramètres structurants du projet imposés par le porteur :")
+            
             if st.session_state.cadrage:
-                table = fusion_doc.add_table(rows=1, cols=2)
-                table.style = 'Table Grid'
-                hdr_cells = table.rows[0].cells
-                hdr_cells[0].text = 'Critère'
-                hdr_cells[1].text = 'Valeur'
-                
+                # Format liste, plus digeste pour l'IA qu'un tableau
                 for k, v in st.session_state.cadrage.items():
-                    row_cells = table.add_row().cells
-                    row_cells[0].text = str(k)
-                    row_cells[1].text = str(v)
+                    if v:
+                        p = fusion_doc.add_paragraph(style='List Bullet')
+                        p.add_run(f"{k} : ").bold = True
+                        p.add_run(str(v))
             else:
                 fusion_doc.add_paragraph("Aucune contrainte spécifique renseignée.")
+            
+            fusion_doc.add_paragraph("\n")
 
-            # 4. Ajout de l'ANALYSE SOFIA (Onglet 2)
-            fusion_doc.add_heading("PARTIE 2 : ANALYSE TECHNIQUE (Source SofIA)", 1)
+            # --- 3. ANALYSE TECHNIQUE (La Matière) ---
+            fusion_doc.add_heading("DOCUMENT 2 : ANALYSE TECHNIQUE PRÉALABLE (Source SofIA)", 1)
+            fusion_doc.add_paragraph("Ce contenu est issu d'une première analyse documentaire et IA. Il sert de base de connaissance.")
+            
             if st.session_state.html_content:
-                # Nettoyage simple du HTML vers Texte pour le Word
                 soup = BeautifulSoup(st.session_state.html_content, 'html.parser')
-                texte_brut = soup.get_text(separator="\n")
-                fusion_doc.add_paragraph(texte_brut)
+                
+                # Nettoyage amélioré : On cible le contenu pertinent
+                # On essaie de trouver le corps de la réponse pour éviter les menus/footers
+                # (Ajustez les sélecteurs selon la structure réelle de votre HTML SofIA)
+                main_content = soup.find('body') 
+                if main_content:
+                    # Traitement spécial pour les tableaux HTML -> Texte structuré
+                    for table in main_content.find_all('table'):
+                        # Convertir table en texte Markdown-like pour que l'IA comprenne la grille
+                        table_text = "\n[TABLEAU DE DONNÉES]\n"
+                        rows = table.find_all('tr')
+                        for row in rows:
+                            cols = row.find_all(['td', 'th'])
+                            cols = [ele.text.strip() for ele in cols]
+                            table_text += " | ".join(cols) + "\n"
+                        table.replace_with(table_text)
+                    
+                    text_clean = main_content.get_text(separator="\n")
+                    # Supprimer les lignes vides multiples
+                    text_clean = re.sub(r'\n\s*\n', '\n\n', text_clean)
+                    fusion_doc.add_paragraph(text_clean)
+                else:
+                    fusion_doc.add_paragraph(soup.get_text())
             else:
                 fusion_doc.add_paragraph("Pas de données SofIA fournies.")
 
-            # 5. Sauvegarde en mémoire
+            # Sauvegarde
             buffer = io.BytesIO()
             fusion_doc.save(buffer)
             buffer.seek(0)
-
-            # Stockage dans la session pour ne pas perdre le bouton de téléchargement au rechargement
             st.session_state.fusion_buffer = buffer
 
         # --- AFFICHAGE DU RÉSULTAT ---
