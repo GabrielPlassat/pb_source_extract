@@ -8,7 +8,6 @@ from docx import Document
 from docx.oxml.shared import qn
 from docx.oxml import OxmlElement
 import docx
-import google.generativeai as genai
 import pypdf
 
 def extract_text_from_file(uploaded_file):
