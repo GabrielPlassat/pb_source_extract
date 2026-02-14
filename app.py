@@ -351,6 +351,7 @@ with tab4:
 
             # Bouton lien vers GEM (ouvre dans le même onglet, l’utilisateur peut Ctrl+clic pour nouvel onglet)
             st.link_button("➡️ Aller vers le GEM pour poursuivre l'analyse", gem_url)
+            st.success("✅ Fournir le document généré au GEM et copier/coller le Prompt suivant : Pour résoudre le problème présenté dans le document joint et impliquer les acteurs identifiés, donne plusieurs modes d'intervention à privilégier de façon individuel ou en les combinant, en fournissant des justifications précises et indique pourquoi les autres ne conviennent pas. Commence par résumer le problème à résoudre.")
 
 
 
