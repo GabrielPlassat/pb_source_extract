@@ -1,3 +1,6 @@
+Voici une version adaptée de ton script qui fusionne, dans l’onglet 4, le HTML importé dans l’onglet 2 et le texte de cadrage saisi dans l’onglet 3, en produisant un document Word qui conserve au mieux la **forme** du HTML tout en ajoutant une section structurée pour les contraintes.
+
+```python
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
@@ -60,35 +63,71 @@ def add_hyperlink(paragraph, url, text):
     paragraph._p.append(hyperlink)
     return hyperlink
 
-def clean_html_advanced(html_content):
-    """Nettoie le HTML de SofIA et transforme les tableaux en texte structuré."""
-    if not html_content: return ""
-    soup = BeautifulSoup(html_content, 'html.parser')
-
-    for element in soup(["script", "style", "header", "footer", "nav", "button", "input"]):
-        element.decompose()
-
-    for table in soup.find_all('table'):
-        table_text = "\n"
-        rows = table.find_all('tr')
-        for row in rows:
-            cols = row.find_all(['td', 'th'])
-            cols_text = [ele.get_text(separator=" ").strip().replace("\n", " ") for ele in cols]
-            line = "| " + " | ".join(cols_text) + " |"
-            table_text += line + "\n"
-        table_text += "\n"
-        table.replace_with(table_text)
-
-    text = soup.get_text(separator='\n\n')
-    return re.sub(r'\n\s*\n', '\n\n', text).strip()
-
 def convert_html_to_doc_format(html_content):
-    """Encapsule le contenu pour Word avec gestion des tableaux."""
+    """Encapsule le contenu pour Word avec gestion des tableaux et style HTML conservé."""
     soup = BeautifulSoup(html_content, 'html.parser')
-    # Correction légère pour éviter les erreurs si markdown_to_html_table n'est pas défini
-    html_header = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"></head><body>'
+    html_header = (
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" '
+        'xmlns:w="urn:schemas-microsoft-com:office:word" '
+        'xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"></head><body>'
+    )
     full_html = html_header + str(soup) + '</body></html>'
     return io.BytesIO(full_html.encode('utf-8'))
+
+def build_constraints_block(data: dict) -> str:
+    """Construit un bloc HTML structuré pour les contraintes (onglet 3)."""
+    # Tableau simple en HTML pour garder une forme propre dans Word
+    rows = []
+    labels = {
+        "Périmètre": "Périmètre réduit du problème",
+        "Nature": "Type de problème",
+        "Douleurs": "Douleurs perçues par les acteurs",
+        "Partenaires": "Partenaires obligatoires / Compétiteurs",
+        "Bénéfices T": "Bénéfices tangibles",
+        "Bénéfices I": "Bénéfices intangibles",
+        "Objectifs": "Objectifs chiffrés et opposables",
+        "Budget": "Budget prévisionnel",
+        "Planning": "Planning et jalons",
+        "Com": "Communication / Visibilité",
+        "Marketing": "Vecteurs marketing",
+        "Infos": "Informations complémentaires"
+    }
+    for k, v in data.items():
+        label = labels.get(k, k)
+        content = v if v else "Non précisé"
+        rows.append(
+            f"<tr><th style='text-align:left;padding:4px 8px;'>{label}</th>"
+            f"<td style='padding:4px 8px;'>{content}</td></tr>"
+        )
+    table_html = (
+        "<h2>Cadrage du problème et contraintes</h2>"
+        "<table border='1' style='border-collapse:collapse;width:100%;'>"
+        f"{''.join(rows)}"
+        "</table>"
+    )
+    return table_html
+
+def merge_html_and_constraints(sofia_html: str, constraints_data: dict) -> io.BytesIO:
+    """
+    Fusionne le HTML de SofIA et le bloc de contraintes (en HTML)
+    dans un seul fichier .doc utilisable par Word.
+    """
+    constraints_html = build_constraints_block(constraints_data)
+    sofia_part = BeautifulSoup(sofia_html, 'html.parser')
+
+    # On encapsule les deux sections dans un même body pour que Word garde la mise en forme HTML
+    merged_html = (
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" '
+        'xmlns:w="urn:schemas-microsoft-com:office:word" '
+        'xmlns="http://www.w3.org/TR/REC-html40">'
+        '<head><meta charset="utf-8"></head><body>'
+        '<h1>Analyse SofIA</h1>'
+        f'{str(sofia_part)}'
+        '<hr/>'
+        f'{constraints_html}'
+        '</body></html>'
+    )
+    return io.BytesIO(merged_html.encode('utf-8'))
 
 # --- INITIALISATION SESSION STATE ---
 if "messages" not in st.session_state:
@@ -97,6 +136,8 @@ if "cadrage" not in st.session_state:
     st.session_state.cadrage = {}
 if 'prompt_genere' not in st.session_state:
     st.session_state.prompt_genere = False
+if 'sofia_html' not in st.session_state:
+    st.session_state.sofia_html = None
 
 # --- HEADER (LOGO + TITRE PROJET) ---
 col_logo, col_titre = st.columns([1, 5])
@@ -119,7 +160,12 @@ st.markdown("---")
 # --- INTERFACE STREAMLIT ---
 st.title("Assistant pour formuler un problématique")
 
-tab1, tab2, tab3, tab4 = st.tabs(["📝 1.Aide au Prompt pour SofIA", "📂 2.Extraction & Export", "📝 3.Aide au Prompt Contraintes", "🤖 4. Eval IA"])
+tab1, tab2, tab3, tab4 = st.tabs([
+    "📝 1.Aide au Prompt pour SofIA",
+    "📂 2.Extraction & Export",
+    "📝 3.Aide au Prompt Contraintes",
+    "🤖 4. Eval IA"
+])
 
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1: 
@@ -185,12 +231,20 @@ with tab2:
 
     if uploaded_file:
         content = uploaded_file.read().decode('utf-8')
+        # On stocke le HTML pour réutilisation dans l'onglet 4
+        st.session_state.sofia_html = content
+
         col1, col2 = st.columns(2)
         
         with col1:
             st.subheader("📄 Export Document")
             doc_file = convert_html_to_doc_format(content)
-            st.download_button("📥 Télécharger la réponse (.doc)", doc_file, "Reponse_Sofia.doc", "application/msword")
+            st.download_button(
+                "📥 Télécharger la réponse (.doc)",
+                doc_file,
+                "Reponse_Sofia.doc",
+                "application/msword"
+            )
             
         with col2:
             st.subheader("📚 Sources PDF")
@@ -206,8 +260,14 @@ with tab2:
                                 resp = requests.get(link['href'], timeout=10)
                                 name = f"{i+1}_{link.get_text()[:50].strip()}.pdf".replace('/', '_')
                                 zf.writestr(name, resp.content)
-                            except: pass
-                st.download_button("📥 Télécharger le .zip", zip_buffer.getvalue(), "Sources.zip", "application/zip")
+                            except:
+                                pass
+                st.download_button(
+                    "📥 Télécharger le .zip",
+                    zip_buffer.getvalue(),
+                    "Sources.zip",
+                    "application/zip"
+                )
 
 # --- ONGLET 3 : AIDE AU PROMPT "CONTRAINTES" ---
 with tab3:
@@ -225,20 +285,25 @@ with tab3:
     c11 = st.text_area("Vecteurs marketing :")
     c12 = st.text_area("Informations complémentaires :")
 
+    # On mémorise les contraintes pour l'onglet 4
+    st.session_state.cadrage = {
+        "Périmètre": c1, "Nature": c2, "Douleurs": c3, "Partenaires": c4,
+        "Bénéfices T": c5, "Bénéfices I": c6, "Objectifs": c7,
+        "Budget": c8, "Planning": c9, "Com": c10, "Marketing": c11, "Infos": c12
+    }
+
     if st.button("Générer le document de cadrage (.docx)"):
         prompt_doc = Document()
         prompt_doc.add_heading("Cadrage du Problème & Prompt pour Eval", 0)
 
         p = prompt_doc.add_paragraph("Ce document est à fournir à l'Assistant Eval. Se connecter à ")
-        add_hyperlink(p, "https://m365.cloud.microsoft/chat/?titleId=T_7b923e69-c9aa-4317-d331-4647b285be26", "Eval")
+        add_hyperlink(
+            p,
+            "https://m365.cloud.microsoft/chat/?titleId=T_7b923e69-c9aa-4317-d331-4647b285be26",
+            "Eval"
+        )
        
-        data = {
-            "Périmètre": c1, "Nature": c2, "Douleurs": c3, "Partenaires": c4,
-            "Bénéfices T": c5, "Bénéfices I": c6, "Objectifs": c7,
-            "Budget": c8, "Planning": c9, "Com": c10, "Marketing": c11, "Infos": c12
-        }
-        
-        for key, value in data.items():
+        for key, value in st.session_state.cadrage.items():
             prompt_doc.add_heading(key, level=1)
             prompt_doc.add_paragraph(value if value else "Non précisé")
         
@@ -253,7 +318,28 @@ with tab3:
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         )
 
-# --- ONGLET 4 : EVAL IA ---
+# --- ONGLET 4 : EVAL IA (FUSION) ---
 with tab4:
     st.header("🤖 Génération de la Stratégie (Mode Externe)")
-    st.info("Ce module fusionne l'analyse SofIA et vos contraintes de cadrage dans un seul document optimisé pour l'IA.")
+    st.info(
+        "Ce module fusionne l'analyse SofIA (onglet 2) et vos contraintes de cadrage (onglet 3) "
+        "dans un seul document optimisé pour l'IA."
+    )
+
+    if st.session_state.get("sofia_html") is None:
+        st.warning("Veuillez d'abord importer le fichier chat_history.html dans l'onglet 2.")
+    else:
+        if st.button("Générer le document fusionné (.doc)"):
+            merged_file = merge_html_and_constraints(
+                st.session_state.sofia_html,
+                st.session_state.cadrage
+            )
+            st.download_button(
+                label="📥 Télécharger le document fusionné",
+                data=merged_file,
+                file_name="Analyse_Sofia_et_Cadrage.doc",
+                mime="application/msword"
+            )
+```
+
+Ce code conserve le HTML de SofIA (donc la mise en forme) en le plaçant dans un même fichier Word avec un bloc de contraintes construit en HTML (tableau), le tout généré via l’onglet 4.
