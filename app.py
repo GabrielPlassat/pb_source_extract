@@ -204,11 +204,11 @@ with tab1:
         on_click=lambda: st.session_state.update({"prompt_genere": True})
         )
         # --- À AJOUTER EN BAS DE L'ONGLET 1 ---
-if st.session_state.prompt_genere:
-        st.markdown("---")
-        st.success("✅ Document généré avec succès !")
-        st.markdown("### 🚀 Étape suivante")
-        st.markdown("Connectez-vous maintenant à [Sofia](https://www.sofia-transition-ecologique.fr/) pour copier/coller votre prompt généré.")
+        if st.session_state.prompt_genere:
+            st.markdown("---")
+            st.success("✅ Document généré avec succès !")
+            st.markdown("### 🚀 Étape suivante")
+            st.markdown("Connectez-vous maintenant à [Sofia](https://www.sofia-transition-ecologique.fr/) pour copier/coller votre prompt généré.")
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
@@ -218,6 +218,7 @@ with tab2:
 
     if uploaded_file:
         content = uploaded_file.read().decode('utf-8')
+        st.session_state.html_content = content
         col1, col2 = st.columns(2)
         
         with col1:
