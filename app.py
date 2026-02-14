@@ -286,33 +286,83 @@ with tab3:
         )
         
       # --- TAB 4 : ASSISTANT GEMINI (NOUVEAU) ---
+# --- TAB 4 : ASSISTANT GEMINI & STRATÉGIE ---
 with tab4:
-    st.header("🤖 Discuter avec Eval (Gemini)")
+    st.header("🤖 L'Architecte des Transitions (IA)")
     
     if not gemini_available:
-        st.error("⚠️ Clé API Gemini manquante. Ajoutez GEMINI_API_KEY dans vos Secrets Streamlit.")
+        st.warning("⚠️ Pour activer l'IA, veuillez configurer votre clé API Gemini dans les secrets.")
     else:
-        st.markdown("Posez des questions sur le projet, demandez des résumés ou des idées d'innovation.")
+        st.info("Cet assistant peut analyser l'ensemble de votre dossier (Réponse SofIA + Cadrage) pour proposer une stratégie.")
 
+        # --- BOUTON D'ACTION STRATÉGIQUE ---
+        if st.button("🧠 Générer la Stratégie d'Intervention (Fusion des documents)"):
+            
+            # 1. Vérification des données sources
+            if not st.session_state.html_content:
+                st.error("❌ Erreur : Aucun fichier SofIA chargé dans l'Onglet 2.")
+            else:
+                with st.spinner("Fusion des documents et analyse par l'Architecte..."):
+                    try:
+                        # A. Extraction du texte de la réponse SofIA (HTML -> Texte brut)
+                        soup = BeautifulSoup(st.session_state.html_content, 'html.parser')
+                        texte_sofia = soup.get_text(separator="\n")
+
+                        # B. Formatage des données de Cadrage (Onglet 3)
+                        texte_cadrage = "--- DONNÉES DE CADRAGE ET CONTRAINTES ---\n"
+                        if st.session_state.cadrage:
+                            for k, v in st.session_state.cadrage.items():
+                                texte_cadrage += f"- {k} : {v}\n"
+                        else:
+                            texte_cadrage += "Aucune contrainte spécifique saisie dans l'onglet 3.\n"
+
+                        # C. Construction du Prompt "Fusion"
+                        prompt_strategie = (
+                            "Tu es un expert en stratégie de transition écologique (Architecte des Transitions). "
+                            "Voici les données complètes du problème (Dossier technique + Contraintes terrain).\n\n"
+                            f"{texte_cadrage}\n\n"
+                            "--- ANALYSE TECHNIQUE PRÉALABLE (SOFIA) ---\n"
+                            f"{texte_sofia}\n\n"
+                            "--- CONSIGNE ---\n"
+                            "Propose le meilleur mode d'intervention ou une combinaison de modes d'intervention "
+                            "pour résoudre le problème présenté dans ces contenus fusionnés. "
+                            "Sois structuré, opérationnel et justifie tes choix par rapport aux contraintes du cadrage."
+                        )
+
+                        # D. Envoi à Gemini
+                        model = genai.GenerativeModel('gemini-1.5-flash')
+                        response = model.generate_content(prompt_strategie)
+
+                        # E. Affichage du résultat
+                        st.session_state.messages.append({"role": "user", "content": "Génère la stratégie d'intervention basée sur le dossier complet."})
+                        st.session_state.messages.append({"role": "assistant", "content": response.text})
+                        st.rerun() # Pour rafraîchir l'affichage du chat immédiatement
+
+                    except Exception as e:
+                        st.error(f"Erreur lors de l'analyse : {e}")
+
+        st.divider()
+
+        # --- INTERFACE DE CHAT CLASSIQUE ---
         # Affichage de l'historique
         for message in st.session_state.messages:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
-        # Zone de saisie utilisateur
-        if prompt := st.chat_input("Votre question..."):
-            # 1. Afficher le message utilisateur
+        # Zone de saisie pour continuer la discussion sur la stratégie
+        if prompt := st.chat_input("Posez une question sur la stratégie proposée..."):
             st.chat_message("user").markdown(prompt)
             st.session_state.messages.append({"role": "user", "content": prompt})
 
-            # 2. Appel à Gemini
+            # Contexte glissant (on garde les derniers échanges en mémoire)
+            chat_context = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages[-5:]])
+            
             try:
-                model = genai.GenerativeModel('gemini-pro')
-                response = model.generate_content(prompt)
+                model = genai.GenerativeModel('gemini-1.5-flash')
+                response = model.generate_content(chat_context)
                 
-                # 3. Afficher la réponse
                 with st.chat_message("assistant"):
                     st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
-                st.error(f"Erreur Gemini : {e}")  
+                st.error(f"Erreur : {e}")
