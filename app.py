@@ -83,7 +83,7 @@ with tab2:
     # Formulaire de questions
     q1 = st.text_area("Peut-on réduire le périmètre du problème sur un champs plus précis :")
     
-    st.markdown("Est ce que le problème à résoudre est considéré comme compliqué, complexe ou vicieux (wicked) ? [En savoir plus sur les types de problèmes](https://fr.wikipedia.org/wiki/Probl%C3%A8me_vicieux)")
+    st.markdown("Est ce que le problème à résoudre est considéré comme compliqué, complexe ou vicieux (wicked) ? [En savoir plus sur les problèmes "vicieux"](https://fr.wikipedia.org/wiki/Probl%C3%A8me_vicieux)")
     q2 = st.radio("Type de problème :", ["Compliqué", "Complexe", "Vicieux (Wicked)"])
 
     q3 = st.text_area("Est ce que les douleurs liées au problème sont réellement perçues par les potentiels clients ? ou d'autres acteurs à préciser ? :")
