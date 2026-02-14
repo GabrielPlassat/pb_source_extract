@@ -141,11 +141,15 @@ with tab1:
         prompt_buffer.seek(0)
         
         # Organisation dans le document Word
-        prompt_doc.add_heading("Votre base de prompt personnalisée :", level=1)
+        prompt_doc.add_heading("Votre base de prompt personnalisée à relire et ajuster :", level=1)
         prompt_doc.add_paragraph(phrase_prompt)
         
         prompt_doc.add_heading("Relire et reformuler si besoin avant de copier/coller dans Sofia : https://www.sofia-transition-ecologique.fr/", level=1)
-  
+        p = prompt_doc.add_paragraph("Ce document complet est à relire, compléter, ajuster. Puis il sera copié/collé dans Sofia. Se connecter à ")
+        # On ajoute le lien cliquable vers Eval
+        url_sofia = "https://www.sofia-transition-ecologique.fr/"
+        add_hyperlink(p, url_sofia, "SofIA")
+          
         
         # Export
         prompt_buffer = io.BytesIO()
