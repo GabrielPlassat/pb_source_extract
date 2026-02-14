@@ -69,7 +69,7 @@ def add_hyperlink(paragraph, url, text):
     paragraph._p.append(hyperlink)
     return hyperlink
 
-st.set_page_config(page_title="Aide à la formulation du problème", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="Architecte des Transitions", page_icon="⚡", layout="wide")
 # --- AJOUTER CE BLOC JUSTE APRÈS set_page_config ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
