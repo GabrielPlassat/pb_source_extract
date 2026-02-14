@@ -54,7 +54,7 @@ with tab1:
     q2 = st.text_input("2. Périmètre géographique :", placeholder="ex: dans tous les territoires")
     q3 = st.text_area("3. Cibles visées en priorité :", placeholder="ex: toutes les personnes à tous les âges")
     q4 = st.text_input("4. Objectif chiffré :", placeholder="ex: augmenter de 20% la part de la marche")
-    q5 = st.text_area("5. Une action complémentaire proposée à SofIA (option):", placeholder="ex: étudier plus particulièrement ..."))
+    q5 = st.text_area("5. Eventuellement, une action complémentaire proposée à SofIA ?", placeholder="ex: étudier plus particulièrement ..."))
 
     if st.button("Générer le document de Prompt pour SofIA (.docx)"):
         # Création du document Word
