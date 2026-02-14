@@ -10,6 +10,25 @@ from docx.oxml.shared import qn
 from docx.oxml import OxmlElement
 import docx
 
+# --- HEADER (LOGO + TITRE PROJET) ---
+col_logo, col_titre = st.columns([1, 5])
+
+with col_logo:
+    # Affiche le logo (assurez-vous que le fichier est bien à la racine)
+    try:
+        st.image("LOGO ARC.jpg", use_container_width=True)
+    except:
+        st.warning("Logo non trouvé")
+
+with col_titre:
+    # Utilisation de HTML pour un alignement vertical et une mise en forme spécifiques
+    st.markdown("""
+        <div style='margin-top: 20px;'>
+            <h2 style='color: #2E4053;'>Projet Exploratoire Formation IMT - l'Architecte des Transitions</h2>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---") # Ligne de séparation horizontale
 def add_hyperlink(paragraph, url, text):
     """Insère un hyperlien cliquable dans un paragraphe Word."""
     part = paragraph.part
