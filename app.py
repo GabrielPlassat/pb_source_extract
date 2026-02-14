@@ -386,7 +386,7 @@ with tab4:
             
             with col_link:
                 # Remplacez l'URL ci-dessous par celle de votre GEM spécifique
-                url_gem = "https://gemini.google.com/app" 
+                url_gem = "https://gemini.google.com/gem/1y9w9p-YCpKER7F9enlRczopToIylE-NP?usp=sharing" 
                 
                 st.markdown(f"""
                 <a href="{url_gem}" target="_blank" style="text-decoration:none;">
