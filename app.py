@@ -54,7 +54,7 @@ with tab1:
     q2 = st.text_input("2. Périmètre géographique :", placeholder="ex: dans tous les territoires")
     q3 = st.text_area("3. Cibles visées en priorité :", placeholder="ex: toutes les personnes à tous les âges")
     q4 = st.text_input("4. Objectif chiffré :", placeholder="ex: augmenter de 20% la part de la marche")
-    q5 = st.text_area("5. Informations complémentaires pour SofIA :")
+    q5 = st.text_area("5. Une action complémentaire proposée à SofIA (option):", placeholder="ex: étudier plus particulièrement ..."))
 
     if st.button("Générer le document de Prompt pour SofIA (.docx)"):
         # Création du document Word
@@ -74,7 +74,7 @@ with tab1:
         # On utilise f"..." pour assembler le texte proprement
         phrase_prompt = (
             f"Comment {q1} dans {q2}, en ciblant plus particulièrement {q3}. "
-            f"Un premier objectif serait de {q4}. {q5}"
+            f"Un premier objectif serait de {q4}. En complément, il est proposé de {q5}. "
             f"Quelles sont les principales données dans ce domaine, les acteurs à mobiliser, "
             f"les paramètres clés à travailler, les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, "
             f"les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes, les règles de fonctionnement "
@@ -87,7 +87,7 @@ with tab1:
         prompt_doc.add_heading("Votre base de prompt personnalisée :", level=1)
         prompt_doc.add_paragraph(phrase_prompt)
         
-        prompt_doc.add_heading("Relire et reformuler si besoin avant de copier/coller dans Sofia à gauche - Je souhaite poser une question :", level=1)
+        prompt_doc.add_heading("Relire et reformuler si besoin avant de copier/coller dans Sofia", level=1)
   
         
         # Export
