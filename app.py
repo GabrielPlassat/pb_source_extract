@@ -60,6 +60,15 @@ with tab1:
         # Création du document Word
         prompt_doc = Document()
         prompt_doc.add_heading("Prompt pour SofIA", 0)
+
+# --- AJOUT DE L'IMAGE DANS LE DOCX ---
+        try:
+            prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface SofIA :")
+            # On insère l'image (ajustez la largeur si nécessaire)
+            from docx.shared import Inches
+            prompt_doc.add_picture("sofia_q.png", width=Inches(5.5))
+        except Exception as e:
+            st.error(f"Erreur lors de l'insertion de l'image : {e}")
         
         # Construction de la phrase de prompt à partir des variables q1 à q5
         # On utilise f"..." pour assembler le texte proprement
