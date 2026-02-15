@@ -10,7 +10,6 @@ from docx import Document
 from docx.oxml.shared import qn
 from docx.oxml import OxmlElement
 from docx.shared import Inches
-import streamlit as st
 import streamlit.components.v1 as components
 
 # Configuration de la page (DOIT être la première commande Streamlit)
@@ -394,20 +393,20 @@ with tab5:
 with tab6:
     st.header("6.Questionnaire d'évaluation des réponses des Agents")
 
-airtable_iframe = """
-<iframe 
-    class="airtable-embed" 
-    src="https://airtable.com/embed/apprjFOnbLySO8spa/shrncKacF4alPuLNZ" 
-    frameborder="0" 
-    onmousewheel="" 
-    width="100%" 
-    height="533" 
-    style="background: transparent; border: 1px solid #ccc;">
-</iframe>
-"""
+    airtable_iframe = """
+    <iframe 
+        class="airtable-embed" 
+        src="https://airtable.com/embed/apprjFOnbLySO8spa/shrncKacF4alPuLNZ" 
+        frameborder="0" 
+        onmousewheel="" 
+        width="100%" 
+        height="533" 
+        style="background: transparent; border: 1px solid #ccc;">
+    </iframe>
+    """
 
 # Intégration dans Streamlit
-components.html(airtable_iframe, height=550) # On met un height légèrement supérieur pour éviter les scrolls inutiles
+    components.html(airtable_iframe, height=550) # On met un height légèrement supérieur pour éviter les scrolls inutiles
 
 
     
