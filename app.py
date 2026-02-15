@@ -180,7 +180,7 @@ with tab0:
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1: 
     st.header("1.Aide pour formuler le problème initial à SofIA")
-    st.info("SofIA va être utilisé pour rédiger la problématique complète. Les champs ci-dessous sont à renseigner pour générer votre Prompt.")
+    st.info("SofIA va être utilisé pour rédiger la problématique complète. Les champs ci-dessous sont à renseigner pour générer votre Prompt qui sera fourni en entrée à SofIA.")
     
     q1 = st.text_area("1. Votre objectif principal :", placeholder="ex: développer la pratique de la marche au quotidien")
     q2 = st.text_input("2. Périmètre géographique :", placeholder="ex: dans tous les territoires")
