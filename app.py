@@ -173,8 +173,8 @@ tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 with tab0: 
     st.header("0.Présentation du projet ACT")
     st.info("L'ArChitecte des Transitions, ACT, est un projet exploratoire visant à augmenter l'expert et le manager; L'objectif est de les aider à mieux naviguer dans une forte incertitude systémique.")
-    st.info("Pour cela, plusieurs Agents IA ont été développés sur la base de +100 évaluations de programmes réalisées ces 20 dernières années. Fort de ces connaissances, les Agents IA peuvent les accompagner pour concevoir de nouveaux modes d'intervention, mieux intégrer les aspects systémiques, pour intégrer une série de contraintes et évaluer leur conséquence.")
-    st.error("Retrouver [ici](https://ademecloud-my.sharepoint.com/:x:/g/personal/gabriel_plassat_ademe_fr/IQDlZ56uAIX_RYwITobzHvDiAf72-NKLhjhpny3n2J1Tpyo?e=eClACW) tous les modes d'interventions identifiés. Pour toute question : [Gabriel Plassat](mailto:gabriel.plassat@ademe.fr)")
+    st.info("Pour cela, plusieurs Agents IA ont été développés sur la base de +100 évaluations de programmes réalisées ces 20 dernières années. Fort de ces connaissances, les Agents IA peuvent vous accompagner pour concevoir de nouveaux modes d'intervention, mieux intégrer les aspects systémiques, pour intégrer une série de contraintes et évaluer leur conséquence.")
+    st.error("Retrouver [ici](https://ademecloud-my.sharepoint.com/:x:/g/personal/gabriel_plassat_ademe_fr/IQDlZ56uAIX_RYwITobzHvDiAf72-NKLhjhpny3n2J1Tpyo?e=eClACW) tous les modes d'interventions identifiés à ce jour. Pour toute question : [Gabriel Plassat](mailto:gabriel.plassat@ademe.fr)")
     st.image("incertitude_syst.png", caption="Schéma", use_container_width=True)
     
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
@@ -188,10 +188,10 @@ with tab1:
     q4 = st.text_input("4. Objectif chiffré :", placeholder="ex: augmenter de 20% la part de la marche")
     q5 = st.text_area("5. Action complémentaire ?", placeholder="ex: étudier plus particulièrement ...")
     
-    if st.button("Générer le document de Prompt pour SofIA (.docx)"):
+    if st.button("Générer le document de Prompt pour SofIA (.docx) que vous pourrez copier/coller dans SofIA."):
         prompt_doc = Document()
         prompt_doc.add_heading("Prompt pour SofIA", 0)
-
+   
         try:
             prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface SofIA :")
             prompt_doc.add_picture("sofia_q.png", width=Inches(5.5))
@@ -236,7 +236,7 @@ with tab1:
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
     st.header("2.Récupération de l'exportation")
-    st.info("Importez le fichier chat_history.html généré par SofIA.")
+    st.info("Importez le fichier chat_history.html généré par SofIA pour le transformer en fichier au format docx")
     uploaded_file = st.file_uploader("Glissez votre fichier chat_history.html ici", type="html", key="uploader")
 
     if uploaded_file:
@@ -282,6 +282,7 @@ with tab2:
 # --- ONGLET 3 : AIDE AU PROMPT "CONTRAINTES" ---
 with tab3:
     st.header("3.Cadrage du problème et contraintes")
+    st.info("En remplissant les champs ci dessous, vous précisez le champs de contrainte qui s'applique sur votre problématique. Ces informations seront mises en forme dans un document .docx. pour être ensuite ajoutées au document généré par SofIA.")
     c1 = st.text_area("Périmètre réduit du problème :")
     c2 = st.radio("Type de problème :", ["Compliqué", "Complexe", "Pernicieux (Wicked)"])
     c3 = st.text_area("Douleurs perçues par les acteurs :")
