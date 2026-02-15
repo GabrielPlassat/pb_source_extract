@@ -377,7 +377,7 @@ with tab5:
         "L'Agent Chaos vise à renforcer la robustesse d'un mode d'intervention en le stressant avec plusieurs évènements probables."
     )
     st.info(
-        "Il faut fournir en pièce jointe à cet Agent CHAOS le document (.docx) généré par l'Agent EVAL (onglet 4). Si vous ne l'avez pas fait : en bas de la réponse de l'Agent EVAL, à coté de 👍 👎 🔄 📑, clique sur 3 petits points verticaux ⁝ puis *Exportez vers Docs*. En bas d'écran, cela génère un Google Doc que vous transformez via Fichier / Télécharger / Microsoft Word") "
+        "Il faut fournir en pièce jointe à cet Agent CHAOS le document (.docx) généré par l'Agent EVAL (onglet 4). Si vous ne l'avez pas fait : en bas de la réponse de l'Agent EVAL, à coté de 👍 👎 🔄 📑, clique sur 3 petits points verticaux ⁝ puis *Exportez vers Docs*. En bas d'écran, cela génère un Google Doc que vous transformez via Fichier / Télécharger / Microsoft Word). "
     )
 
     gem2_url = "https://gemini.google.com/gem/1MdHeIqf8zOuSRWyO3RudoIHji3njSbtR?usp=sharing"
