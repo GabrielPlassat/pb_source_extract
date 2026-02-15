@@ -173,7 +173,7 @@ tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 # --- ONGLET 0 : PRésentation du projet ACT ---
 with tab0: 
     st.header("0.Présentation du projet ACT")
-    st.info("L'ArChitecte des Transitions, ACT, est un projet exploratoire visant à augmenter les capacités d'actions de l'expert et du manager; L'objectif est de les aider à mieux naviguer dans une forte incertitude technique, financière, sociale, donc systémique.")
+    st.info("L'ArChitecte des Transitions, ACT, est un projet exploratoire visant à augmenter les capacités d'actions de l'expert et du manager; L'objectif est de les aider dans la conception de leur mode d'intervention dans une forte incertitude technique, financière, sociale, donc systémique.")
     st.info("Pour cela, plusieurs Agents IA ont été développés sur la base de +100 évaluations de programmes réalisées ces 20 dernières années. Fort de ces connaissances, les Agents IA peuvent vous accompagner pour concevoir de nouveaux modes d'intervention, mieux intégrer les aspects systémiques, pour intégrer une série de contraintes et évaluer leur conséquence.")
     st.error("Retrouver [ici](https://ademecloud-my.sharepoint.com/:x:/g/personal/gabriel_plassat_ademe_fr/IQDlZ56uAIX_RYwITobzHvDiAf72-NKLhjhpny3n2J1Tpyo?e=eClACW) tous les modes d'interventions identifiés à ce jour. Pour toute question : [Gabriel Plassat](mailto:gabriel.plassat@ademe.fr)")
     st.image("incertitude_syst.png", caption="Schéma", use_container_width=True)
