@@ -333,6 +333,9 @@ with tab3:
 with tab4:
     st.header("🤖 1er Agent EVAL")
     st.info(
+        "L'Agent EVAL propose des modes d'intervention à partir d'une problématique décrite dans une pièce jointe; Il s'appuie sur une base documentaire des 100 programmes d'évaluation d'interventions de l'ADEME."
+    )
+    st.info(
         "Il faut fournir à cet Agent EVAL l'analyse SofIA (onglet 2) et vos contraintes de cadrage (onglet 3) "
         "dans un seul document optimisé pour l'IA."
     )
@@ -363,7 +366,26 @@ with tab4:
 
             # Bouton lien vers GEM (ouvre dans le même onglet, l’utilisateur peut Ctrl+clic pour nouvel onglet)
             st.link_button("➡️ Aller vers l'Agent EVAL pour poursuivre l'analyse", gem_url)
-            st.success("✅ Fournir le document généré à l'Agent EVAL en pièce jointe et copier/coller le Prompt suivant : Pour résoudre le problème présenté dans le document joint et impliquer les acteurs identifiés, donne plusieurs modes d'intervention à privilégier de façon individuel ou en les combinant, en fournissant des justifications précises et indique pourquoi les autres ne conviennent pas. Commence par résumer le problème à résoudre.")
+            st.success("✅ Fournir le document généré à l'Agent EVAL en pièce jointe et copier/coller le Prompt suivant : Pour résoudre le problème présenté dans le document joint, atteindre les objectifs fixés dans le contexte présenté, impliquer les acteurs identifiés, donne les modes d'intervention les plus adaptés. Il est possible de combiner plusieurs modes. Fournit les justifications précises pour choix de modes d'intervention et de combinaisons, et indique pourquoi les autres ne conviennent pas. Commence par résumer le problème à résoudre.")
+            st.success("📁 En bas de la réponse de l'Agent CHAOS, à coté de 👍 👎 🔄 📑, clique sur 3 petits points verticaux ⁝ puis *Exportez vers Docs*. En bas d'écran, cela génère un Google Doc que vous transformez via Fichier / Télécharger / Microsoft Word")
+            st.warning("❤️ Il est possible et souhaitable d'évaluer le résultat fourni en allant ensuite à l'onglet 6.")
 
+# --- ONGLET 5 : CHAOS IA ---
+with tab5:
+    st.header("🤖 2ème Agent CHAOS")
+    st.info(
+        "L'Agent Chaos vise à renforcer la robustesse d'un mode d'intervention en le stressant avec plusieurs évènements probables."
+    )
+    st.info(
+        "Il faut fournir en pièce jointe à cet Agent CHAOS le document (.docx) généré par l'Agent EVAL (onglet 4) "
+    )
+
+    gem2_url = "https://gemini.google.com/gem/1MdHeIqf8zOuSRWyO3RudoIHji3njSbtR?usp=sharing"
+
+ # Bouton lien vers GEM (ouvre dans le même onglet, l’utilisateur peut Ctrl+clic pour nouvel onglet)
+    st.link_button("➡️ Aller vers l'Agent CHAOS pour poursuivre l'analyse", gem2_url)
+    st.success("✅ Fournir le document généré par l'Agent EVAL à l'Agent CHAOS en pièce jointe et copier/coller le Prompt suivant : Evalue la robustesse du programme présenté dans le fichier ci-joint en sélectionnant des évènements probables à fort impacts et propose des améliorations sur l'organisation et les actions du programme, ainsi que les acteurs à impliquer.")
+    st.success("📁 En bas de la réponse de l'Agent CHAOS, à coté de 👍 👎 🔄 📑, clique sur 3 petits points verticaux ⁝ puis *Exportez vers Docs*. En bas d'écran, cela génère un Google Doc que vous transformez via Fichier / Télécharger / Microsoft Word")
+    st.warning("❤️ Il est possible et souhaitable d'évaluer le résultat fourni en allant ensuite à l'onglet 6.")
 
 
