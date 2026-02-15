@@ -234,6 +234,8 @@ with tab1:
             st.success("✅ Document généré avec succès !")
             st.markdown("### 🚀 Étape suivante : Connectez-vous à [Sofia](https://www.sofia-transition-ecologique.fr/)")
 
+    st.image("sofia_q.png", caption="SofIA", use_container_width=True)
+
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
     st.header("2.Récupération de l'exportation")
