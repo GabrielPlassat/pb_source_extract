@@ -210,12 +210,12 @@ with tab1:
             f"actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
         )
         
-        prompt_doc.add_heading("Votre base de prompt personnalisée à relire et vérifier :", level=1)
+        prompt_doc.add_heading("Votre base de prompt personnalisée à vérifier, relire et éventuellement compléter :", level=1)
         prompt_doc.add_paragraph(phrase_prompt)
         
         prompt_doc.add_heading("Lien vers Sofia : https://www.sofia-transition-ecologique.fr/", level=1)
         p = prompt_doc.add_paragraph("Ce document complet est à relire. Se connecter à ")
-        add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA")
+        add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA", puis copier/coller le texte complet ci dessus)
         
         prompt_buffer = io.BytesIO()
         prompt_doc.save(prompt_buffer)
