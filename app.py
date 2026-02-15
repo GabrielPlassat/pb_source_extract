@@ -366,8 +366,8 @@ with tab4:
 
             # Bouton lien vers GEM (ouvre dans le même onglet, l’utilisateur peut Ctrl+clic pour nouvel onglet)
             st.link_button("➡️ Aller vers l'Agent EVAL pour poursuivre l'analyse", gem_url)
-            st.success("✅ Fournir le document généré à l'Agent EVAL en pièce jointe et copier/coller le Prompt suivant : Pour résoudre le problème présenté dans le document joint, atteindre les objectifs fixés dans le contexte présenté, impliquer les acteurs identifiés, donne les modes d'intervention les plus adaptés. Il est possible de combiner plusieurs modes. Fournit les justifications précises pour choix de modes d'intervention et de combinaisons, et indique pourquoi les autres ne conviennent pas. Commence par résumer le problème à résoudre.")
-            st.success("📁 En bas de la réponse de l'Agent CHAOS, à coté de 👍 👎 🔄 📑, clique sur 3 petits points verticaux ⁝ puis *Exportez vers Docs*. En bas d'écran, cela génère un Google Doc que vous transformez via Fichier / Télécharger / Microsoft Word")
+            st.success("✅ Fournir le document généré à l'Agent EVAL en pièce jointe et copier/coller le Prompt suivant : *Pour résoudre le problème présenté dans le document joint, atteindre les objectifs fixés dans le contexte présenté, impliquer les acteurs identifiés, donne les modes d'intervention les plus adaptés. Il est possible de combiner plusieurs modes. Fournit les justifications précises pour choix de modes d'intervention et de combinaisons, et indique pourquoi les autres ne conviennent pas. Commence par résumer le problème à résoudre.*")
+            st.success("📁 Une fois que l'Agent EVAL a répondu, en bas de la réponse, à coté de 👍 👎 🔄 📑, clique sur 3 petits points verticaux ⁝ puis *Exportez vers Docs*. En bas d'écran, cela génère un Google Doc que vous transformez via Fichier / Télécharger / Microsoft Word")
             st.warning("❤️ Il est possible et souhaitable d'évaluer le résultat fourni en allant ensuite à l'onglet 6.")
 
 # --- ONGLET 5 : CHAOS IA ---
@@ -384,8 +384,8 @@ with tab5:
 
  # Bouton lien vers GEM (ouvre dans le même onglet, l’utilisateur peut Ctrl+clic pour nouvel onglet)
     st.link_button("➡️ Aller vers l'Agent CHAOS pour poursuivre l'analyse", gem2_url)
-    st.success("✅ Fournir le document généré par l'Agent EVAL à l'Agent CHAOS en pièce jointe et copier/coller le Prompt suivant : Evalue la robustesse du programme présenté dans le fichier ci-joint en sélectionnant des évènements probables à fort impacts et propose des améliorations sur l'organisation et les actions du programme, ainsi que les acteurs à impliquer.")
-    st.success("📁 En bas de la réponse de l'Agent CHAOS, à coté de 👍 👎 🔄 📑, clique sur 3 petits points verticaux ⁝ puis *Exportez vers Docs*. En bas d'écran, cela génère un Google Doc que vous transformez via Fichier / Télécharger / Microsoft Word")
+    st.success("✅ Fournir le document généré par l'Agent EVAL à l'Agent CHAOS en pièce jointe et copier/coller le Prompt suivant : *Evalue la robustesse du programme présenté dans le fichier ci-joint en sélectionnant des évènements probables à fort impacts et propose des améliorations sur l'organisation et les actions du programme, ainsi que les acteurs à impliquer*.")
+    st.success("📁 Une fois que l'Agent CHAOS a répondu, en bas de la réponse, à coté de 👍 👎 🔄 📑, clique sur 3 petits points verticaux ⁝ puis *Exportez vers Docs*. En bas d'écran, cela génère un Google Doc que vous transformez via Fichier / Télécharger / Microsoft Word")
     st.warning("❤️ Il est possible et souhaitable d'évaluer le résultat fourni en allant ensuite à l'onglet 6.")
 
 
