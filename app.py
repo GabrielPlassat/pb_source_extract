@@ -214,8 +214,8 @@ with tab1:
         prompt_doc.add_paragraph(phrase_prompt)
         
         prompt_doc.add_heading("Lien vers Sofia : https://www.sofia-transition-ecologique.fr/", level=1)
-        p = prompt_doc.add_paragraph("Ce document complet est à relire. Se connecter à ")
-        add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA", puis copier/coller le texte complet ci dessus)
+        p = prompt_doc.add_paragraph("Ce document complet est à relire pour ensuite le copier/coller dans la barre de SofIA. Se connecter à ")
+        add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA")
         
         prompt_buffer = io.BytesIO()
         prompt_doc.save(prompt_buffer)
