@@ -210,7 +210,7 @@ with tab1:
             f"actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
         )
         
-        prompt_doc.add_heading("Votre base de prompt personnalisée :", level=1)
+        prompt_doc.add_heading("Votre base de prompt personnalisée à relire et vérifier :", level=1)
         prompt_doc.add_paragraph(phrase_prompt)
         
         prompt_doc.add_heading("Lien vers Sofia : https://www.sofia-transition-ecologique.fr/", level=1)
