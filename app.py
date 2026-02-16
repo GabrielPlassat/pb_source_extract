@@ -170,10 +170,10 @@ tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📝 6.Questionnaire"
 ])
 
-# --- ONGLET 0 : PRésentation du projet ACT ---
+# --- ONGLET 0 : PRésentation du projet ART ---
 with tab0: 
-    st.header("0.Présentation du projet ACT")
-    st.info("L'ArChitecte des Transitions, ACT, est un projet exploratoire visant à augmenter les capacités d'actions de l'expert et du manager; L'objectif est de les aider dans la conception de leur mode d'intervention dans une forte incertitude technique, financière, sociale, donc systémique.")
+    st.header("0.Présentation du projet ART")
+    st.info("L'ARchitecte des Transitions, ART, est un projet exploratoire visant à augmenter les capacités d'actions de l'expert et du manager; L'objectif est de les aider dans la conception de leur mode d'intervention dans une forte incertitude technique, financière, sociale, donc systémique.")
     st.info("Pour cela, plusieurs Agents IA ont été développés sur la base de +100 évaluations de programmes réalisées ces 20 dernières années. Fort de ces connaissances, les Agents IA peuvent vous accompagner pour concevoir de nouveaux modes d'intervention, mieux intégrer les aspects systémiques, pour intégrer une série de contraintes et évaluer leur conséquence.")
     st.error("Pour toute question : Gabriel Plassat")
     st.image("incertitude_syst.png", caption="Schéma", use_container_width=True)
