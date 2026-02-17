@@ -286,9 +286,9 @@ with tab2:
 with tab3:
     st.header("3.Cadrage du problème et contraintes")
     st.info("En remplissant les champs ci dessous, vous précisez le champs de contrainte qui s'applique sur votre problématique. Ces informations seront mises en forme dans un document .docx. pour être ensuite ajoutées au document généré par SofIA.")
-    c1 = st.text_area("Périmètre réduit du problème :")
-    c2 = st.radio("Type de problème :", ["Compliqué", "Complexe", "Pernicieux (Wicked)"])
-    c3 = st.text_area("Douleurs perçues par les acteurs :")
+    c1 = st.text_area("Peut on réduire le périmètre du problème :")
+    c2 = st.radio("Type de problème :", ["Compliqué", "Complexe", "Pernicieux (Wicked)[lien wikipedia](https://en.wikipedia.org/wiki/Wicked_problem)"])
+    c3 = st.text_area("Quels sont les acteurs vraiment concernés par le problème ? [pain point](https://marketpedia.ca/lexique/pain-points/#:~:text=En%20marketing%2C%20l'expression%20anglaise,dans%20leur%20exp%C3%A9rience%20d'achat.) :")
     c4 = st.text_area("Partenaires obligatoires / Compétiteurs :")
     c5 = st.text_area("Bénéfices tangibles :")
     c6 = st.text_area("Bénéfices intangibles :")
