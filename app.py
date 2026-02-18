@@ -364,62 +364,6 @@ with tab1:
 
     st.image("sofia_q.png", caption="Interface SofIA", use_container_width=True)
 
-# =============================================================================
-# TESTS
-# =============================================================================
-
-    if __name__ == "__main__":
-    print("=== TEST DE LA SOLUTION LLM ===\n")
-    
-    # Test 1 : Tous les champs
-    print("Test 1 : Tous les champs remplis")
-    print("-" * 80)
-    result1 = build_prompt_with_llm(
-        "développer la pratique de la marche au quotidien",
-        "dans tous les territoires",
-        "toutes les personnes à tous les âges",
-        "augmenter de 20% la part de la marche",
-        "étudier plus particulièrement les trajets domicile-travail"
-    )
-    if result1:
-        print(result1)
-    else:
-        print("❌ Erreur lors de la génération")
-    print("\n" + "=" * 80 + "\n")
-    
-    # Test 2 : Seulement 2 champs
-    print("Test 2 : Seulement objectif et cibles")
-    print("-" * 80)
-    result2 = build_prompt_with_llm(
-        "réduire la consommation d'énergie des bâtiments",
-        "",
-        "les copropriétés de plus de 50 lots",
-        "",
-        ""
-    )
-    if result2:
-        print(result2)
-    else:
-        print("❌ Erreur lors de la génération")
-    print("\n" + "=" * 80 + "\n")
-    
-    # Test 3 : Un seul champ
-    print("Test 3 : Seulement objectif chiffré")
-    print("-" * 80)
-    result3 = build_prompt_with_llm(
-        "",
-        "",
-        "",
-        "atteindre 100 000 véhicules électriques en circulation",
-        ""
-    )
-    if result3:
-        print(result3)
-    else:
-        print("❌ Erreur lors de la génération")
-    print("\n" + "=" * 80 + "\n")
-
-
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
     st.header("2.Récupération de l'exportation")
