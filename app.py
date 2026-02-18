@@ -287,7 +287,7 @@ with tab1:
         help="Ajoutez des compléments d'information (optionnel)."
     )
     
-    st.info("💡 Vous n'êtes pas obligé de remplir tous les champs ! L'IA s'adaptera automatiquement.")
+    st.info("💡 Vous n'êtes pas obligé de remplir tous les champs ! Mais plus vous donnez d'informations sur votre problème meilleure sera la suite ...")
     
     if st.button("🤖 Générer le prompt avec IA", type="primary"):
         # Vérifier qu'au moins un champ est rempli
@@ -363,7 +363,6 @@ with tab1:
         """)
 
     st.image("sofia_q.png", caption="Interface SofIA", use_container_width=True)
-"""
 
 # =============================================================================
 # TESTS
