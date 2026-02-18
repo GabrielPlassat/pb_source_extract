@@ -233,9 +233,9 @@ RÈGLES STRICTES :
 1. Intègre TOUTES les informations de manière naturelle et fluide
 2. La question doit être grammaticalement parfaite (élisions correctes, pas de redondances)
 3. Formulation professionnelle adaptée à un contexte institutionnel
-4. OBLIGATOIRE : Termine par cette série de questions (à copier exactement) :
+4. OBLIGATOIRE : Termine par cette série de questions (à copier exactement en ayant fait un saut à la ligne) :
 
-"Quelles sont les principales données dans ce domaine, quelles sont les données dont disposent l'ADEME dans ce domaine, quels sont les acteurs à mobiliser, les paramètres clés à travailler. Quelles sont les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes. Quelles sont les règles de fonctionnement du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème et identifier de nouvelles solutions. Quels sont les effets et conséquences systémiques liés à ce problème et aux futures actions dans d'autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
+"En complément, j'ajoute les questions suivantes : Quelles sont les principales données dans ce domaine, quelles sont les données dont disposent l'ADEME dans ce domaine, quels sont les acteurs à mobiliser, les paramètres clés à travailler. Quelles sont les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes. Quelles sont les règles de fonctionnement du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème et identifier de nouvelles solutions. Quels sont les effets et conséquences systémiques liés à ce problème et aux futures actions dans d'autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
 
 IMPORTANT : Réponds UNIQUEMENT avec la question reformulée finale. Pas d'introduction, pas d'explication, juste la question."""
 
@@ -261,27 +261,37 @@ with tab0:
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1: 
     st.header("1.Aide pour formuler le problème initial à SofIA")
-    st.info("L'IA reformulera automatiquement vos réponses en une question cohérente, même si certains champs sont vides. 🤖 Propulsé par Gemini (gratuit)")
-    
+    st.info("Décrivez votre problématique en remplissant les champs suivants. Restez bien sur le problème, ne proposez pas de solutions. Vous pouvez laisser des champs vides mais plus vous fournissez d'informations correspondant à votre problème, plus les prochaines étapes seront pertinentes !")
+    with st.expander("ℹ️ Comment remplir les champs ?"):
+        st.markdown('''
+        **Guide rapide :**
+        
+        - **Objectif principal** : Ce que vous voulez accomplir (ex: "développer la mobilité douce")
+        - **Périmètre** : Où (ex: "en Île-de-France")
+        - **Cibles** : Pour qui (ex: "les jeunes de 18-25 ans")
+        - **Objectif chiffré** : Un objectif mesurable (ex: "réduire de 30% les émissions")
+        - **Action complémentaire** : Détails supplémentaires (ex: "préserver l'emploi local")
+        ''')
+        
     q1 = st.text_area(
         "1. Votre objectif principal :", 
         placeholder="ex: développer la pratique de la marche au quotidien",
-        help="Décrivez votre objectif principal (optionnel)"
+        help="Décrivez votre objectif principal (essentiel)"
     )
     q2 = st.text_input(
         "2. Périmètre géographique :", 
         placeholder="ex: dans tous les territoires",
-        help="Précisez le périmètre (optionnel)"
+        help="Précisez le périmètre"
     )
     q3 = st.text_area(
         "3. Cibles visées en priorité :", 
         placeholder="ex: toutes les personnes à tous les âges",
-        help="Identifiez les cibles prioritaires (optionnel)"
+        help="Identifiez les cibles prioritaires"
     )
     q4 = st.text_input(
-        "4. Objectif chiffré :", 
-        placeholder="ex: augmenter de 20% la part de la marche",
-        help="Donnez un objectif mesurable (optionnel)"
+        "4. Objectifs chiffrés :", 
+        placeholder="ex: augmenter de 20% la part de la marche en 5 ans",
+        help="Donnez un objectif mesurable à atteindre, éventuellement un objectif temporel"
     )
     q5 = st.text_area(
         "5. Action complémentaire ?", 
@@ -289,20 +299,20 @@ with tab1:
         help="Ajoutez des compléments (optionnel)"
     )
     
-    st.info("💡 Vous n'êtes pas obligé de remplir tous les champs ! L'IA s'adaptera automatiquement.")
+    st.info("💡 Merci ! L'IA reformule et vous propose un Prompt à copier/coller dans SofIA. Une série de questions générique sera ajoutée automatiquement.")
     
-    if st.button("🤖 Générer le prompt avec Gemini", type="primary"):
+    if st.button("🤖 Générer le prompt", type="primary"):
         if not any([q1.strip(), q2.strip(), q3.strip(), q4.strip(), q5.strip()]):
-            st.error("⚠️ Veuillez remplir au moins un champ avant de générer le prompt.")
+            st.error("⚠️ Veuillez remplir un maximum de champ avant de générer le prompt.")
         else:
-            with st.spinner("🤖 Reformulation intelligente avec Gemini... Quelques secondes."):
+            with st.spinner("🤖 Reformulation en cours... Quelques secondes."):
                 phrase_prompt = build_prompt_with_gemini(q1, q2, q3, q4, q5)
             
             if phrase_prompt is None:
                 st.error("❌ Erreur lors de la génération. Vérifiez que votre clé API Gemini est configurée dans les Secrets.")
                 st.info("💡 Pour configurer : Settings > Secrets > Ajoutez GEMINI_API_KEY")
             else:
-                st.success("✅ Prompt généré avec succès par Gemini !")
+                st.success("✅ Prompt généré avec succès !")
                 
                 with st.expander("👁️ Aperçu du prompt généré", expanded=True):
                     st.markdown(phrase_prompt)
@@ -342,22 +352,6 @@ with tab1:
                     st.markdown("---")
                     st.success("✅ Document téléchargé !")
                     st.markdown("### 🚀 Étape suivante : Connectez-vous à [SofIA](https://www.sofia-transition-ecologique.fr/)")
-
-    with st.expander("ℹ️ Comment remplir les champs ?"):
-        st.markdown('''
-        **Guide rapide :**
-        
-        - **Objectif principal** : Ce que vous voulez accomplir (ex: "développer la mobilité douce")
-        - **Périmètre** : Où (ex: "en Île-de-France")
-        - **Cibles** : Pour qui (ex: "les jeunes de 18-25 ans")
-        - **Objectif chiffré** : Un objectif mesurable (ex: "réduire de 30% les émissions")
-        - **Action complémentaire** : Détails supplémentaires (ex: "préserver l'emploi local")
-        
-        💡 **Important :** Vous n'avez pas besoin de remplir tous les champs ! 
-        Gemini reformulera intelligemment vos informations.
-        
-        🤖 **Propulsé par Gemini** : Reformulation naturelle et gratuite (1500 requêtes/jour)
-        ''')
 
     st.image("sofia_q.png", caption="Interface SofIA", use_container_width=True)
 
