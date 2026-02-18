@@ -237,7 +237,7 @@ RÈGLES STRICTES :
 
 IMPORTANT : Réponds UNIQUEMENT avec la question reformulée finale. Pas d'introduction, pas d'explication, juste la question."""
 
-     # Appeler l'API
+        # Appeler l'API
         response = model.generate_content(prompt)
         return response.text.strip()
         
@@ -355,7 +355,6 @@ with tab1:
         ''')
 
     st.image("sofia_q.png", caption="Interface SofIA", use_container_width=True)
-"""
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
@@ -528,7 +527,7 @@ with tab6:
     </iframe>
     """
 
-# Intégration dans Streamlit
+    # Intégration dans Streamlit
     components.html(airtable_iframe, height=550) # On met un height légèrement supérieur pour éviter les scrolls inutiles
 
 
