@@ -208,14 +208,21 @@ def build_prompt_with_gemini(q1, q2, q3, q4, q5):
     
     try:
         # Configurer l'API Gemini avec la clé depuis les secrets Streamlit
-        # Dans Streamlit Cloud : Settings > Secrets > Ajouter GEMINI_API_KEY
-        api_key = st.secrets.get("GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", ""))
+        # Dans Streamlit Cloud : Settings > Secrets > Ajouter GEMINI_API_KEY    
+        try:
+            api_key = st.secrets["GEMINI_API_KEY"]
+            # Nettoyer la clé (enlever guillemets et espaces)
+            api_key = api_key.strip().strip('"').strip("'")
+        except (KeyError, FileNotFoundError):
+            st.error("❌ Clé API Gemini non trouvée dans les Secrets.")
+            return None
         
         if not api_key:
-            st.warning("⚠️ Clé API Gemini non configurée. Utilisez la génération basique.")
+            st.error("❌ Clé API Gemini vide.")
             return None
             
         genai.configure(api_key=api_key)
+        st.info(f"🔑 Clé configurée (début: {api_key[:10]}...)")
         
         # Utiliser Gemini Pro (gratuit)
         model = genai.GenerativeModel('gemini-pro')
@@ -242,7 +249,7 @@ IMPORTANT : Réponds UNIQUEMENT avec la question reformulée finale. Pas d'intro
         return response.text.strip()
         
     except Exception as e:
-        print(f"Erreur API Gemini : {e}")
+        st.error(f"❌ Erreur API Gemini : {type(e).__name__}: {str(e)}")
         return None
 
 # --- ONGLET 0 : PRésentation du projet ART ---
