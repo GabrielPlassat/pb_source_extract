@@ -369,7 +369,7 @@ with tab1:
 # TESTS
 # =============================================================================
 
-if __name__ == "__main__":
+    if __name__ == "__main__":
     print("=== TEST DE LA SOLUTION LLM ===\n")
     
     # Test 1 : Tous les champs
