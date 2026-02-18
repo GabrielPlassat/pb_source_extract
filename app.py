@@ -225,7 +225,7 @@ def build_prompt_with_gemini(q1, q2, q3, q4, q5):
         st.info(f"🔑 Clé configurée (début: {api_key[:10]}...)")
         
         # Utiliser Gemini Pro (gratuit)
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Construire le prompt pour Gemini
         prompt = f"""Tu es un assistant expert qui aide à formuler des problématiques pour l'outil SofIA de l'ADEME.
