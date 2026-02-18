@@ -346,7 +346,7 @@ with tab1:
 
     # Aide contextuelle
     with st.expander("ℹ️ Comment remplir les champs ?"):
-        st.markdown(\"\"\"
+        st.markdown("""
         **Guide rapide :**
         
         - **Objectif principal** : Ce que vous voulez accomplir (ex: "développer la mobilité douce")
@@ -360,7 +360,7 @@ with tab1:
         
         🤖 **Avantage de l'IA :** La reformulation sera grammaticalement correcte, fluide et professionnelle, 
         quelle que soit la façon dont vous remplissez les champs.
-        \"\"\")
+        """)
 
     st.image("sofia_q.png", caption="Interface SofIA", use_container_width=True)
 """
