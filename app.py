@@ -299,7 +299,7 @@ with tab1:
         help="Ajoutez des compléments (optionnel)"
     )
     
-    st.info("💡 Merci ! L'IA reformule et vous propose un Prompt à copier/coller dans SofIA. Une série de questions générique sera ajoutée automatiquement. Vous avez la suite des instructions dans le document généré (à retrouver dans les Téléchargements).")
+    st.info("💡 Merci ! L'IA reformule et vous propose un Prompt à copier/coller dans SofIA. Une série de questions générique sera ajoutée automatiquement (ne pas les modifier). Vous avez la suite des instructions dans le document généré (à retrouver dans les Téléchargements).")
     
     if st.button("🤖 Générer le prompt à copier/coller dans SofIA", type="primary"):
         if not any([q1.strip(), q2.strip(), q3.strip(), q4.strip(), q5.strip()]):
@@ -323,9 +323,9 @@ with tab1:
                 prompt_doc.add_heading("Prompt pour SofIA", 0)
            
                 try:
-                    prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface Je souhaite poser une question :")
                     p = prompt_doc.add_paragraph("Se connecter à ")
                     add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA")
+                    prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface de SofIA 'Je souhaite poser une question' :")
                     prompt_doc.add_picture("sofia_q.png", width=Inches(5.5))
                 except:
                     pass
