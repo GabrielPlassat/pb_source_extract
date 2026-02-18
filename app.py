@@ -13,7 +13,7 @@ from docx.shared import Inches
 import streamlit.components.v1 as components
 import requests
 import json
-import google.generativeai as genai
+from google import genai
 import os
 
 # Configuration de la page (DOIT être la première commande Streamlit)
@@ -177,9 +177,6 @@ tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 # =============================================================================
 # SOLUTION AVEC API GEMINI (GRATUITE) - Pour Streamlit Cloud
 # =============================================================================
-
-import google.generativeai as genai
-import os
 
 # Configuration de l'API Gemini
 # Vous devrez ajouter votre clé API dans les secrets Streamlit
