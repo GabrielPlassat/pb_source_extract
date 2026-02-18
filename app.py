@@ -323,18 +323,17 @@ with tab1:
                 prompt_doc.add_heading("Prompt pour SofIA", 0)
            
                 try:
-                    prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface SofIA :")
+                    prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface Je souhaite poser une question :")
+                    p = prompt_doc.add_paragraph("Se connecter à ")
+                    add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA")
                     prompt_doc.add_picture("sofia_q.png", width=Inches(5.5))
                 except:
                     pass
                 
-                prompt_doc.add_heading("Votre prompt personnalisé (généré par Gemini) :", level=1)
+                prompt_doc.add_heading("Votre prompt personnalisé, à relire, ajuster avant de copier/coller dans SofIA :", level=1)
                 prompt_doc.add_paragraph(phrase_prompt)
                 
-                prompt_doc.add_heading("Lien vers SofIA : https://www.sofia-transition-ecologique.fr/", level=1)
-                p = prompt_doc.add_paragraph("Copiez/collez ce prompt dans SofIA. Se connecter à ")
-                add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA")
-                
+                            
                 # Sauvegarder
                 prompt_buffer = io.BytesIO()
                 prompt_doc.save(prompt_buffer)
