@@ -299,7 +299,7 @@ with tab1:
         help="Ajoutez des compléments (optionnel)"
     )
     
-    st.info("💡 Merci ! L'IA reformule et vous propose un Prompt à copier/coller dans SofIA. Une série de questions générique sera ajoutée automatiquement. Vous avez la suite des instructions dans le document généré (à retrouver dans les Téléchargements.")
+    st.info("💡 Merci ! L'IA reformule et vous propose un Prompt à copier/coller dans SofIA. Une série de questions générique sera ajoutée automatiquement. Vous avez la suite des instructions dans le document généré (à retrouver dans les Téléchargements).")
     
     if st.button("🤖 Générer le prompt à copier/coller dans SofIA", type="primary"):
         if not any([q1.strip(), q2.strip(), q3.strip(), q4.strip(), q5.strip()]):
