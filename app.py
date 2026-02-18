@@ -299,9 +299,9 @@ with tab1:
         help="Ajoutez des compléments (optionnel)"
     )
     
-    st.info("💡 Merci ! L'IA reformule et vous propose un Prompt à copier/coller dans SofIA. Une série de questions générique sera ajoutée automatiquement.")
+    st.info("💡 Merci ! L'IA reformule et vous propose un Prompt à copier/coller dans SofIA. Une série de questions générique sera ajoutée automatiquement. Vous avez la suite des instructions dans le document généré.")
     
-    if st.button("🤖 Générer le prompt", type="primary"):
+    if st.button("🤖 Générer le prompt à copier/coller dans SofIA", type="primary"):
         if not any([q1.strip(), q2.strip(), q3.strip(), q4.strip(), q5.strip()]):
             st.error("⚠️ Veuillez remplir un maximum de champ avant de générer le prompt.")
         else:
