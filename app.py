@@ -254,8 +254,8 @@ IMPORTANT : Réponds UNIQUEMENT avec la question reformulée finale. Pas d'intro
 with tab0: 
     st.header("0.Présentation du projet ART")
     st.info("L'ARchitecte des Transitions, ART, est un projet exploratoire visant à augmenter les capacités d'actions de l'expert et du manager; L'objectif est de les aider dans la conception de leur mode d'intervention dans une forte incertitude technique, financière, sociale, donc systémique.")
-    st.info("Pour cela, plusieurs Agents IA ont été développés sur la base de +100 évaluations de programmes réalisées ces 20 dernières années. Fort de ces connaissances, les Agents IA peuvent vous accompagner pour concevoir de nouveaux modes d'intervention, mieux intégrer les aspects systémiques, pour intégrer une série de contraintes et évaluer leur conséquence.")
-    st.error("Pour toute question : Gabriel Plassat")
+    st.info("Pour cela, plusieurs Agents IA ont été développés sur la base de +100 évaluations de programmes réalisées ces 20 dernières années. Fort de ces connaissances, les Agents IA peuvent vous accompagner pour concevoir de nouveaux modes d'intervention, mieux intégrer les aspects systémiques et les différentes contraintes.")
+    st.error("Il est proposé d'enchaîner les différents onglets de façon chronologique. Pour toute question : Gabriel Plassat")
     st.image("incertitude_syst.png", caption="Schéma", use_container_width=True)
     
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
