@@ -350,21 +350,7 @@ with tab1:
                 if st.session_state.get('prompt_genere', False):
                     st.markdown("---")
                     st.success("✅ Document téléchargé !")
-                    st.markdown("### 🚀 Étape suivante : Connectez-vous à [SofIA](https://www.sofia-transition-ecologique.fr/)")
-
-# Image cliquable vers SofIA (taille réduite)
-                    st.markdown("---")
-                    st.markdown("""
-                        <a href="https://www.sofia-transition-ecologique.fr/" target="_blank">
-                            <img src="sofia_q.png" 
-                                 alt="Interface SofIA" 
-                                 style="width: 400px; cursor: pointer; border: 2px solid #ddd; border-radius: 8px;">
-                        </a>
-                        <p style="text-align: center; color: #666; font-size: 14px;">
-                            👆 Cliquez pour ouvrir SofIA
-                        </p>
-                    """, unsafe_allow_html=True)
-
+             
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
