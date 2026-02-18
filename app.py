@@ -218,11 +218,9 @@ def build_prompt_with_gemini(q1, q2, q3, q4, q5):
             st.error("❌ Clé API Gemini vide.")
             return None
             
-        genai.configure(api_key=api_key)
-        st.info(f"🔑 Clé configurée (début: {api_key[:10]}...)")
-        
-        # Utiliser Gemini Pro (gratuit)
-        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        # Créer le client avec la NOUVELLE API
+        client = genai.Client(api_key=api_key)
+        st.info(f"🔑 Client créé (clé: {api_key[:10]}...)")
         
         # Construire le prompt pour Gemini
         prompt = f"""Tu es un assistant expert qui aide à formuler des problématiques pour l'outil SofIA de l'ADEME.
@@ -241,8 +239,11 @@ RÈGLES STRICTES :
 
 IMPORTANT : Réponds UNIQUEMENT avec la question reformulée finale. Pas d'introduction, pas d'explication, juste la question."""
 
-        # Appeler l'API
-        response = model.generate_content(prompt)
+        # Appeler l'API avec la NOUVELLE syntaxe
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt
+        )
         return response.text.strip()
         
     except Exception as e:
