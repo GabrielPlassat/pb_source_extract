@@ -11,6 +11,8 @@ from docx.oxml.shared import qn
 from docx.oxml import OxmlElement
 from docx.shared import Inches
 import streamlit.components.v1 as components
+import requests
+import json
 
 # Configuration de la page (DOIT être la première commande Streamlit)
 st.set_page_config(page_title="Architecte des Transitions", page_icon="🏗️", layout="wide")
@@ -170,6 +172,82 @@ tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📝 6.Questionnaire"
 ])
 
+# =============================================================================
+# SOLUTION LLM - Reformulation Intelligente du Prompt (onglet 1)
+# =============================================================================
+def build_prompt_with_llm(q1, q2, q3, q4, q5):
+    """
+    Utilise l'API Claude Haiku pour reformuler intelligemment le prompt.
+    Gère automatiquement les champs vides et produit une phrase fluide.
+    
+    Si l'API échoue, retourne None (à gérer par l'appelant).
+    """
+    # Nettoyer et préparer les informations disponibles
+    infos = {}
+    if q1 and q1.strip():
+        infos['objectif_principal'] = q1.strip()
+    if q2 and q2.strip():
+        infos['perimetre'] = q2.strip()
+    if q3 and q3.strip():
+        infos['cibles'] = q3.strip()
+    if q4 and q4.strip():
+        infos['objectif_chiffre'] = q4.strip()
+    if q5 and q5.strip():
+        infos['action_complementaire'] = q5.strip()
+    
+    # Si aucune info fournie
+    if not infos:
+        return None
+    
+    # Construire le prompt système pour Claude
+    system_prompt = """Tu es un assistant expert qui aide à formuler des problématiques pour l'outil SofIA de l'ADEME.
+
+Ton rôle est de créer une question de recherche cohérente et bien formulée à partir des informations fournies.
+
+RÈGLES STRICTES :
+1. Intègre TOUTES les informations disponibles de manière naturelle et fluide
+2. La question doit être grammaticalement parfaite (élisions correctes, pas de redondances)
+3. La formulation doit être professionnelle et adaptée à un contexte institutionnel
+4. OBLIGATOIRE : Termine la question par cette série de questions systémiques (à copier exactement) :
+
+"Quelles sont les principales données dans ce domaine, quelles sont les données dont disposent l'ADEME dans ce domaine, quels sont les acteurs à mobiliser, les paramètres clés à travailler. Quelles sont les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes. Quelles sont les règles de fonctionnement du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème et identifier de nouvelles solutions. Quels sont les effets et conséquences systémiques liés à ce problème et aux futures actions dans d'autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
+
+IMPORTANT : Réponds UNIQUEMENT avec la question reformulée finale. Pas d'introduction, pas d'explication, juste la question."""
+
+    user_prompt = f"""Informations disponibles :
+{json.dumps(infos, indent=2, ensure_ascii=False)}
+
+Reformule ces informations en une question cohérente pour SofIA."""
+
+    try:
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "Content-Type": "application/json",
+                "anthropic-version": "2023-06-01"
+            },
+            json={
+                "model": "claude-haiku-4-20250514",
+                "max_tokens": 1500,
+                "system": system_prompt,
+                "messages": [
+                    {"role": "user", "content": user_prompt}
+                ]
+            },
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            return result['content'][0]['text'].strip()
+        else:
+            print(f"Erreur API {response.status_code}: {response.text}")
+            return None
+            
+    except Exception as e:
+        print(f"Erreur lors de l'appel API : {e}")
+        return None
+
 # --- ONGLET 0 : PRésentation du projet ART ---
 with tab0: 
     st.header("0.Présentation du projet ART")
@@ -181,60 +259,167 @@ with tab0:
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1: 
     st.header("1.Aide pour formuler le problème initial à SofIA")
-    st.info("SofIA va être utilisé pour rédiger la problématique complète. Les champs ci-dessous sont à renseigner pour générer votre Prompt qui sera fourni en entrée à SofIA.")
+    st.info("SofIA va être utilisé pour rédiger la problématique complète. L'IA reformulera automatiquement vos réponses en une question cohérente, même si certains champs sont vides.")
     
-    q1 = st.text_area("1. Votre objectif principal :", placeholder="ex: développer la pratique de la marche au quotidien")
-    q2 = st.text_input("2. Périmètre géographique :", placeholder="ex: dans tous les territoires")
-    q3 = st.text_area("3. Cibles visées en priorité :", placeholder="ex: toutes les personnes à tous les âges")
-    q4 = st.text_input("4. Objectif chiffré :", placeholder="ex: augmenter de 20% la part de la marche")
-    q5 = st.text_area("5. Action complémentaire ?", placeholder="ex: étudier plus particulièrement ...")
+    q1 = st.text_area(
+        "1. Votre objectif principal :", 
+        placeholder="ex: développer la pratique de la marche au quotidien",
+        help="Décrivez votre objectif principal. Ce champ n'est pas obligatoire."
+    )
+    q2 = st.text_input(
+        "2. Périmètre géographique :", 
+        placeholder="ex: dans tous les territoires",
+        help="Précisez le périmètre (optionnel)."
+    )
+    q3 = st.text_area(
+        "3. Cibles visées en priorité :", 
+        placeholder="ex: toutes les personnes à tous les âges",
+        help="Identifiez les cibles prioritaires (optionnel)."
+    )
+    q4 = st.text_input(
+        "4. Objectif chiffré :", 
+        placeholder="ex: augmenter de 20% la part de la marche",
+        help="Donnez un objectif mesurable si possible (optionnel)."
+    )
+    q5 = st.text_area(
+        "5. Action complémentaire ?", 
+        placeholder="ex: étudier plus particulièrement les trajets domicile-travail",
+        help="Ajoutez des compléments d'information (optionnel)."
+    )
     
-    if st.button("Générer le document de Prompt pour SofIA (.docx) que vous pourrez copier/coller dans SofIA."):
-        prompt_doc = Document()
-        prompt_doc.add_heading("Prompt pour SofIA", 0)
-   
-        try:
-            prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface SofIA :")
-            prompt_doc.add_picture("sofia_q.png", width=Inches(5.5))
-        except Exception as e:
-            st.error(f"Erreur lors de l'insertion de l'image : {e}")
-        
-        phrase_prompt = (
-            f"Comment {q1} dans {q2}, en ciblant plus particulièrement {q3}. "
-            f"Un premier objectif serait de {q4}. En complément, il est proposé de {q5}. "
-            f"Quelles sont les principales données dans ce domaine, les acteurs à mobiliser, "
-            f"les paramètres clés à travailler, les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, "
-            f"les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes, les règles de fonctionnement "
-            f"du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème "
-            f"et identifier de nouvelles solutions, les effets et conséquences systémiques liés à ce problème et aux futures "
-            f"actions dans d’autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
-        )
-        
-        prompt_doc.add_heading("Votre base de prompt personnalisée à vérifier, relire et éventuellement compléter :", level=1)
-        prompt_doc.add_paragraph(phrase_prompt)
-        
-        prompt_doc.add_heading("Lien vers Sofia : https://www.sofia-transition-ecologique.fr/", level=1)
-        p = prompt_doc.add_paragraph("Ce document complet est à relire pour ensuite le copier/coller dans la barre de SofIA. Se connecter à ")
-        add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA")
-        
-        prompt_buffer = io.BytesIO()
-        prompt_doc.save(prompt_buffer)
-        prompt_buffer.seek(0)
-        
-        st.download_button(
-            label="📥 Télécharger votre prompt pour SofIA",
-            data=prompt_buffer,
-            file_name="Prompt_Initial_Sofia.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            on_click=lambda: st.session_state.update({"prompt_genere": True})
-        )
+    st.info("💡 Vous n'êtes pas obligé de remplir tous les champs ! L'IA s'adaptera automatiquement.")
+    
+    if st.button("🤖 Générer le prompt avec IA", type="primary"):
+        # Vérifier qu'au moins un champ est rempli
+        if not any([q1.strip(), q2.strip(), q3.strip(), q4.strip(), q5.strip()]):
+            st.error("⚠️ Veuillez remplir au moins un champ avant de générer le prompt.")
+        else:
+            # Générer le prompt avec LLM
+            with st.spinner("🤖 Reformulation intelligente en cours... Cela peut prendre quelques secondes."):
+                phrase_prompt = build_prompt_with_llm(q1, q2, q3, q4, q5)
+            
+            if phrase_prompt is None:
+                st.error("❌ Erreur lors de la génération du prompt. Vérifiez votre connexion et réessayez.")
+            else:
+                # Afficher un aperçu
+                st.success("✅ Prompt généré avec succès !")
+                
+                with st.expander("👁️ Aperçu du prompt généré", expanded=True):
+                    st.markdown(phrase_prompt)
+                    st.caption("Vous pouvez relire et vérifier le prompt avant de le télécharger.")
+                
+                # Créer le document Word
+                prompt_doc = Document()
+                prompt_doc.add_heading("Prompt pour SofIA", 0)
+           
+                try:
+                    prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface SofIA :")
+                    prompt_doc.add_picture("sofia_q.png", width=Inches(5.5))
+                except Exception as e:
+                    # Image non trouvée, on continue sans
+                    pass
+                
+                prompt_doc.add_heading("Votre prompt personnalisé (généré par IA) :", level=1)
+                prompt_doc.add_paragraph(phrase_prompt)
+                
+                prompt_doc.add_heading("Lien vers SofIA : https://www.sofia-transition-ecologique.fr/", level=1)
+                p = prompt_doc.add_paragraph("Copiez/collez ce prompt dans SofIA. Se connecter à ")
+                add_hyperlink(p, "https://www.sofia-transition-ecologique.fr/", "SofIA")
+                
+                # Sauvegarder
+                prompt_buffer = io.BytesIO()
+                prompt_doc.save(prompt_buffer)
+                prompt_buffer.seek(0)
+                
+                st.download_button(
+                    label="📥 Télécharger votre prompt pour SofIA",
+                    data=prompt_buffer,
+                    file_name="Prompt_Initial_Sofia.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    on_click=lambda: st.session_state.update({"prompt_genere": True})
+                )
 
-        if st.session_state.prompt_genere:
-            st.markdown("---")
-            st.success("✅ Document généré avec succès !")
-            st.markdown("### 🚀 Étape suivante : Connectez-vous à [Sofia](https://www.sofia-transition-ecologique.fr/)")
+                if st.session_state.get('prompt_genere', False):
+                    st.markdown("---")
+                    st.success("✅ Document téléchargé !")
+                    st.markdown("### 🚀 Étape suivante : Connectez-vous à [SofIA](https://www.sofia-transition-ecologique.fr/)")
 
-    st.image("sofia_q.png", caption="SofIA", use_container_width=True)
+    # Aide contextuelle
+    with st.expander("ℹ️ Comment remplir les champs ?"):
+        st.markdown(\"\"\"
+        **Guide rapide :**
+        
+        - **Objectif principal** : Ce que vous voulez accomplir (ex: "développer la mobilité douce")
+        - **Périmètre** : Où (ex: "en Île-de-France" ou "sur tout le territoire national")
+        - **Cibles** : Pour qui (ex: "les jeunes de 18-25 ans" ou "les entreprises de plus de 50 salariés")
+        - **Objectif chiffré** : Un objectif mesurable (ex: "réduire de 30% les émissions")
+        - **Action complémentaire** : Détails supplémentaires (ex: "tout en préservant l'emploi local")
+        
+        💡 **Important :** Vous n'avez pas besoin de remplir tous les champs ! L'IA reformulera intelligemment 
+        les informations que vous fournissez, même partielles.
+        
+        🤖 **Avantage de l'IA :** La reformulation sera grammaticalement correcte, fluide et professionnelle, 
+        quelle que soit la façon dont vous remplissez les champs.
+        \"\"\")
+
+    st.image("sofia_q.png", caption="Interface SofIA", use_container_width=True)
+"""
+
+# =============================================================================
+# TESTS
+# =============================================================================
+
+if __name__ == "__main__":
+    print("=== TEST DE LA SOLUTION LLM ===\n")
+    
+    # Test 1 : Tous les champs
+    print("Test 1 : Tous les champs remplis")
+    print("-" * 80)
+    result1 = build_prompt_with_llm(
+        "développer la pratique de la marche au quotidien",
+        "dans tous les territoires",
+        "toutes les personnes à tous les âges",
+        "augmenter de 20% la part de la marche",
+        "étudier plus particulièrement les trajets domicile-travail"
+    )
+    if result1:
+        print(result1)
+    else:
+        print("❌ Erreur lors de la génération")
+    print("\n" + "=" * 80 + "\n")
+    
+    # Test 2 : Seulement 2 champs
+    print("Test 2 : Seulement objectif et cibles")
+    print("-" * 80)
+    result2 = build_prompt_with_llm(
+        "réduire la consommation d'énergie des bâtiments",
+        "",
+        "les copropriétés de plus de 50 lots",
+        "",
+        ""
+    )
+    if result2:
+        print(result2)
+    else:
+        print("❌ Erreur lors de la génération")
+    print("\n" + "=" * 80 + "\n")
+    
+    # Test 3 : Un seul champ
+    print("Test 3 : Seulement objectif chiffré")
+    print("-" * 80)
+    result3 = build_prompt_with_llm(
+        "",
+        "",
+        "",
+        "atteindre 100 000 véhicules électriques en circulation",
+        ""
+    )
+    if result3:
+        print(result3)
+    else:
+        print("❌ Erreur lors de la génération")
+    print("\n" + "=" * 80 + "\n")
+
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
