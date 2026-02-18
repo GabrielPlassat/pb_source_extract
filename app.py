@@ -13,6 +13,8 @@ from docx.shared import Inches
 import streamlit.components.v1 as components
 import requests
 import json
+import google.generativeai as genai
+import os
 
 # Configuration de la page (DOIT être la première commande Streamlit)
 st.set_page_config(page_title="Architecte des Transitions", page_icon="🏗️", layout="wide")
@@ -173,16 +175,22 @@ tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 ])
 
 # =============================================================================
-# SOLUTION LLM - Reformulation Intelligente du Prompt (onglet 1)
+# SOLUTION AVEC API GEMINI (GRATUITE) - Pour Streamlit Cloud
 # =============================================================================
-def build_prompt_with_llm(q1, q2, q3, q4, q5):
+
+import google.generativeai as genai
+import os
+
+# Configuration de l'API Gemini
+# Vous devrez ajouter votre clé API dans les secrets Streamlit
+# Aller sur https://makersuite.google.com/app/apikey pour obtenir une clé gratuite
+
+def build_prompt_with_gemini(q1, q2, q3, q4, q5):
     """
-    Utilise l'API Claude Haiku pour reformuler intelligemment le prompt.
-    Gère automatiquement les champs vides et produit une phrase fluide.
-    
-    Si l'API échoue, retourne None (à gérer par l'appelant).
+    Utilise l'API Gemini (gratuite) pour reformuler intelligemment le prompt.
+    Totalement gratuit jusqu'à 1500 requêtes/jour.
     """
-    # Nettoyer et préparer les informations disponibles
+    # Préparer les informations disponibles
     infos = {}
     if q1 and q1.strip():
         infos['objectif_principal'] = q1.strip()
@@ -195,57 +203,46 @@ def build_prompt_with_llm(q1, q2, q3, q4, q5):
     if q5 and q5.strip():
         infos['action_complementaire'] = q5.strip()
     
-    # Si aucune info fournie
     if not infos:
         return None
     
-    # Construire le prompt système pour Claude
-    system_prompt = """Tu es un assistant expert qui aide à formuler des problématiques pour l'outil SofIA de l'ADEME.
+    try:
+        # Configurer l'API Gemini avec la clé depuis les secrets Streamlit
+        # Dans Streamlit Cloud : Settings > Secrets > Ajouter GEMINI_API_KEY
+        api_key = st.secrets.get("GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", ""))
+        
+        if not api_key:
+            st.warning("⚠️ Clé API Gemini non configurée. Utilisez la génération basique.")
+            return None
+            
+        genai.configure(api_key=api_key)
+        
+        # Utiliser Gemini Pro (gratuit)
+        model = genai.GenerativeModel('gemini-pro')
+        
+        # Construire le prompt pour Gemini
+        prompt = f"""Tu es un assistant expert qui aide à formuler des problématiques pour l'outil SofIA de l'ADEME.
 
-Ton rôle est de créer une question de recherche cohérente et bien formulée à partir des informations fournies.
+À partir des informations suivantes, crée une question de recherche cohérente et bien formulée :
+
+{chr(10).join(f"- {k}: {v}" for k, v in infos.items())}
 
 RÈGLES STRICTES :
-1. Intègre TOUTES les informations disponibles de manière naturelle et fluide
+1. Intègre TOUTES les informations de manière naturelle et fluide
 2. La question doit être grammaticalement parfaite (élisions correctes, pas de redondances)
-3. La formulation doit être professionnelle et adaptée à un contexte institutionnel
-4. OBLIGATOIRE : Termine la question par cette série de questions systémiques (à copier exactement) :
+3. Formulation professionnelle adaptée à un contexte institutionnel
+4. OBLIGATOIRE : Termine par cette série de questions (à copier exactement) :
 
 "Quelles sont les principales données dans ce domaine, quelles sont les données dont disposent l'ADEME dans ce domaine, quels sont les acteurs à mobiliser, les paramètres clés à travailler. Quelles sont les solutions déjà mises en œuvre, les principaux résultats déjà obtenus, les projets ayant réussi, leurs résultats et ceux ayant échoué et leurs causes. Quelles sont les règles de fonctionnement du système considéré, les paradigmes du système considéré et comment le transcender pour réduire le problème et identifier de nouvelles solutions. Quels sont les effets et conséquences systémiques liés à ce problème et aux futures actions dans d'autres domaines, les recommandations pour intégrer les effets rebonds, boucles de rétroactions et cobénéfices ?"
 
 IMPORTANT : Réponds UNIQUEMENT avec la question reformulée finale. Pas d'introduction, pas d'explication, juste la question."""
 
-    user_prompt = f"""Informations disponibles :
-{json.dumps(infos, indent=2, ensure_ascii=False)}
-
-Reformule ces informations en une question cohérente pour SofIA."""
-
-    try:
-        response = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={
-                "Content-Type": "application/json",
-                "anthropic-version": "2023-06-01"
-            },
-            json={
-                "model": "claude-haiku-4-20250514",
-                "max_tokens": 1500,
-                "system": system_prompt,
-                "messages": [
-                    {"role": "user", "content": user_prompt}
-                ]
-            },
-            timeout=30
-        )
+     # Appeler l'API
+        response = model.generate_content(prompt)
+        return response.text.strip()
         
-        if response.status_code == 200:
-            result = response.json()
-            return result['content'][0]['text'].strip()
-        else:
-            print(f"Erreur API {response.status_code}: {response.text}")
-            return None
-            
     except Exception as e:
-        print(f"Erreur lors de l'appel API : {e}")
+        print(f"Erreur API Gemini : {e}")
         return None
 
 # --- ONGLET 0 : PRésentation du projet ART ---
@@ -259,50 +256,48 @@ with tab0:
 # --- ONGLET 1 : AIDE AU PROMPT "SofIA" ---
 with tab1: 
     st.header("1.Aide pour formuler le problème initial à SofIA")
-    st.info("SofIA va être utilisé pour rédiger la problématique complète. L'IA reformulera automatiquement vos réponses en une question cohérente, même si certains champs sont vides.")
+    st.info("L'IA reformulera automatiquement vos réponses en une question cohérente, même si certains champs sont vides. 🤖 Propulsé par Gemini (gratuit)")
     
     q1 = st.text_area(
         "1. Votre objectif principal :", 
         placeholder="ex: développer la pratique de la marche au quotidien",
-        help="Décrivez votre objectif principal. Ce champ n'est pas obligatoire."
+        help="Décrivez votre objectif principal (optionnel)"
     )
     q2 = st.text_input(
         "2. Périmètre géographique :", 
         placeholder="ex: dans tous les territoires",
-        help="Précisez le périmètre (optionnel)."
+        help="Précisez le périmètre (optionnel)"
     )
     q3 = st.text_area(
         "3. Cibles visées en priorité :", 
         placeholder="ex: toutes les personnes à tous les âges",
-        help="Identifiez les cibles prioritaires (optionnel)."
+        help="Identifiez les cibles prioritaires (optionnel)"
     )
     q4 = st.text_input(
         "4. Objectif chiffré :", 
         placeholder="ex: augmenter de 20% la part de la marche",
-        help="Donnez un objectif mesurable si possible (optionnel)."
+        help="Donnez un objectif mesurable (optionnel)"
     )
     q5 = st.text_area(
         "5. Action complémentaire ?", 
         placeholder="ex: étudier plus particulièrement les trajets domicile-travail",
-        help="Ajoutez des compléments d'information (optionnel)."
+        help="Ajoutez des compléments (optionnel)"
     )
     
-    st.info("💡 Vous n'êtes pas obligé de remplir tous les champs ! Mais plus vous donnez d'informations sur votre problème meilleure sera la suite ...")
+    st.info("💡 Vous n'êtes pas obligé de remplir tous les champs ! L'IA s'adaptera automatiquement.")
     
-    if st.button("🤖 Générer le prompt avec IA", type="primary"):
-        # Vérifier qu'au moins un champ est rempli
+    if st.button("🤖 Générer le prompt avec Gemini", type="primary"):
         if not any([q1.strip(), q2.strip(), q3.strip(), q4.strip(), q5.strip()]):
             st.error("⚠️ Veuillez remplir au moins un champ avant de générer le prompt.")
         else:
-            # Générer le prompt avec LLM
-            with st.spinner("🤖 Reformulation intelligente en cours... Cela peut prendre quelques secondes."):
-                phrase_prompt = build_prompt_with_llm(q1, q2, q3, q4, q5)
+            with st.spinner("🤖 Reformulation intelligente avec Gemini... Quelques secondes."):
+                phrase_prompt = build_prompt_with_gemini(q1, q2, q3, q4, q5)
             
             if phrase_prompt is None:
-                st.error("❌ Erreur lors de la génération du prompt. Vérifiez votre connexion et réessayez.")
+                st.error("❌ Erreur lors de la génération. Vérifiez que votre clé API Gemini est configurée dans les Secrets.")
+                st.info("💡 Pour configurer : Settings > Secrets > Ajoutez GEMINI_API_KEY")
             else:
-                # Afficher un aperçu
-                st.success("✅ Prompt généré avec succès !")
+                st.success("✅ Prompt généré avec succès par Gemini !")
                 
                 with st.expander("👁️ Aperçu du prompt généré", expanded=True):
                     st.markdown(phrase_prompt)
@@ -315,11 +310,10 @@ with tab1:
                 try:
                     prompt_doc.add_paragraph("Utilisez le prompt ci-dessous dans l'interface SofIA :")
                     prompt_doc.add_picture("sofia_q.png", width=Inches(5.5))
-                except Exception as e:
-                    # Image non trouvée, on continue sans
+                except:
                     pass
                 
-                prompt_doc.add_heading("Votre prompt personnalisé (généré par IA) :", level=1)
+                prompt_doc.add_heading("Votre prompt personnalisé (généré par Gemini) :", level=1)
                 prompt_doc.add_paragraph(phrase_prompt)
                 
                 prompt_doc.add_heading("Lien vers SofIA : https://www.sofia-transition-ecologique.fr/", level=1)
@@ -344,25 +338,24 @@ with tab1:
                     st.success("✅ Document téléchargé !")
                     st.markdown("### 🚀 Étape suivante : Connectez-vous à [SofIA](https://www.sofia-transition-ecologique.fr/)")
 
-    # Aide contextuelle
     with st.expander("ℹ️ Comment remplir les champs ?"):
-        st.markdown("""
+        st.markdown('''
         **Guide rapide :**
         
         - **Objectif principal** : Ce que vous voulez accomplir (ex: "développer la mobilité douce")
-        - **Périmètre** : Où (ex: "en Île-de-France" ou "sur tout le territoire national")
-        - **Cibles** : Pour qui (ex: "les jeunes de 18-25 ans" ou "les entreprises de plus de 50 salariés")
+        - **Périmètre** : Où (ex: "en Île-de-France")
+        - **Cibles** : Pour qui (ex: "les jeunes de 18-25 ans")
         - **Objectif chiffré** : Un objectif mesurable (ex: "réduire de 30% les émissions")
-        - **Action complémentaire** : Détails supplémentaires (ex: "tout en préservant l'emploi local")
+        - **Action complémentaire** : Détails supplémentaires (ex: "préserver l'emploi local")
         
-        💡 **Important :** Vous n'avez pas besoin de remplir tous les champs ! L'IA reformulera intelligemment 
-        les informations que vous fournissez, même partielles.
+        💡 **Important :** Vous n'avez pas besoin de remplir tous les champs ! 
+        Gemini reformulera intelligemment vos informations.
         
-        🤖 **Avantage de l'IA :** La reformulation sera grammaticalement correcte, fluide et professionnelle, 
-        quelle que soit la façon dont vous remplissez les champs.
-        """)
+        🤖 **Propulsé par Gemini** : Reformulation naturelle et gratuite (1500 requêtes/jour)
+        ''')
 
     st.image("sofia_q.png", caption="Interface SofIA", use_container_width=True)
+"""
 
 # --- ONGLET 2 : EXTRACTION ---
 with tab2:
