@@ -45,6 +45,7 @@ git clone <url-du-depot>
 pip install -r requirements.txt
 
 ### 2. Configuration de l'API Gemini requis pour l'onglet 1
+```bash
 En local : Créez un dossier .streamlit/secrets.toml et ajoutez :
 GEMINI_API_KEY = "VOTRE_CLE_ICI"
 Sur Streamlit Cloud : Ajoutez GEMINI_API_KEY dans la section "Secrets" des paramètres de votre application.
